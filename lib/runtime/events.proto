@@ -1,0 +1,104 @@
+option java_outer_classname = "SkirMessages";
+
+message EchoRequest {
+  required uint32 request_id = 1;
+  optional string str = 2;
+}
+
+message DotRequest {
+  required uint32 request_id = 1;
+  optional string str = 2;
+}
+
+message RunModuleRequest {
+  required uint32 request_id = 1;
+  optional string input_module = 2;
+  repeated string input_argv = 3;
+  optional string fake_argv0 = 4;
+  optional string entry_func = 5;
+  optional uint32 nthreads = 6;
+  optional uint32 run_mode = 7;
+}
+
+message IncludeModuleRequest {
+  required uint32 request_id = 1;
+  enum Type {
+    ERR = 0;
+    ASM = 1;
+    BC  = 2;
+  }
+  optional Type type = 2 [default = ERR];
+  optional string str = 3;
+}
+
+message KernelRequest {
+  required uint32 request_id = 1;
+  optional string init = 2;
+  optional string work = 3;
+  optional uint32 args = 4;
+}
+
+message CallRequest {
+  required uint32 request_id = 1;
+  optional uint32 kernel = 2;
+  repeated uint32 ins = 3;
+  repeated uint32 outs = 4;
+  optional bool opt_only = 5;
+}
+
+message StreamRequest {
+  required uint32 request_id = 1;
+  enum Type {
+    NATIVE = 0;
+    SHARED = 1;
+    SOCKET = 2;
+  }
+  optional Type type = 2 [default = NATIVE];
+  optional uint32 size = 3;
+  optional uint32 id = 4;
+}
+
+message WaitRequest {
+  required uint32 request_id = 1;
+  optional uint32 kernel = 2;
+  optional uint32 data = 3;
+}
+
+message PauseRequest {
+  required uint32 request_id = 1;
+  optional uint32 kernel = 2;
+  optional bool pause = 3;
+}
+
+message RequestResponse {
+  required uint32 request_id = 1;
+  enum Type {
+    OK = 1;
+    ERR = 2;
+    UINT32 = 3;
+    STRING = 4;
+    BYTES = 5;
+  }
+  optional Type type = 2 [default = OK];
+  optional uint32 data_uint32 = 3;
+  optional string data_string = 4;
+  optional bytes data_bytes = 5;
+}
+
+message StateRequest {
+  required uint32 request_id = 1;
+  enum Type {
+    GET = 0;
+    PUT = 1;
+  }
+  optional Type type = 2 [default = PUT];
+  optional uint32 length = 3;
+  optional uint32 data_id = 4;
+  optional bytes data_bytes = 5;
+}
+
+message ShmRequest {
+  required uint32 request_id = 1;
+  optional uint32 length = 2;
+  optional uint32 shm_id = 3;
+}
