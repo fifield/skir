@@ -17,7 +17,7 @@ typedef tbb::spin_mutex kernel_lock_t;
 
 class kernel_task;
 
-static long long _total_cycles = 0;
+//static long long _total_cycles = 0;
 
 typedef enum {
     IDLE,
