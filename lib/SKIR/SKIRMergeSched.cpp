@@ -8,8 +8,8 @@
 
 #include <fstream>
 
-int MaxMergeSize;
-static llvm::cl::opt<int, true>
+size_t MaxMergeSize;
+static llvm::cl::opt<size_t, true>
 FakeMaxMergeSize("max-merge",
 		 llvm::cl::desc(""),
 		 llvm::cl::location(MaxMergeSize), llvm::cl::init(10000));

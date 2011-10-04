@@ -87,7 +87,7 @@ public:
 	    // find out if all the streams have the same element size.
 	    // if they do, we can specialize the workfn for that size
 	    bool equal = true;
-	    int elem_size = 0;
+	    size_t elem_size = 0;
 	    for (int i=0; i<kernel->nins && equal; i++)
 		if (!elem_size) elem_size = kernel->rt_ins[i]->elem_size;
 		else equal = equal && (elem_size == kernel->rt_ins[i]->elem_size);
