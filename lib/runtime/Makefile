@@ -34,6 +34,8 @@ $(LibDir)/libevents_pb.so: $(LibDir)/events.pb.o
 LIBS_CFLAGS=-O0 -fPIC -D_COMPILE_ME_ -I $(PROJ_SRC_ROOT)/include -c
 
 skir-lib: skir-protobuf \
+	$(LibDir)/inline_stream_ops.h \
+	$(LibDir)/inline_stream_ops.cpp \
 	$(LibDir)/inline_stream_ops.bc \
 	$(LibDir)/inline_stream_ops.ll \
 	$(LibDir)/skir_opencl_mod.bc \
@@ -55,6 +57,12 @@ $(LibDir)/inline_stream_ops.ll: $(LibDir)/inline_stream_ops.c.bc
 
 $(LibDir)/inline_stream_ops.bc: $(LibDir)/inline_stream_ops.ll
 	$(Verb) llvm-as < $< > $@
+
+$(LibDir)/inline_stream_ops.h: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.h
+	$(Verb) cp $< $@
+
+$(LibDir)/inline_stream_ops.cpp: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.cpp
+	$(Verb) cp $< $@
 
 %.ll: %.bc
 	$(Verb) llvm-dis < $< > $@
