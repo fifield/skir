@@ -50,7 +50,7 @@ struct SKIRStreamOptsPass : public FunctionPass {
 	//if (!kernel->is_const_idx) return false;
 
 	Function *work = &F;
-	LLVMContext &CTX = F.getContext();
+	//LLVMContext &CTX = F.getContext();
 	bool r = false;
 
 	inst_iterator prev, next_prev=inst_begin(work);
@@ -100,11 +100,12 @@ struct SKIRStreamOptsPass : public FunctionPass {
     }
 
     virtual bool runOnFunction(Function &F) {
-	Value *vins;
-	Value *vouts;
-	std::vector<CallInst*> inline_sites;
-	LLVMContext &CTX = F.getContext();
-	Function *work = &F;
+	//Value *vins;
+	//Value *vouts;
+	//std::vector<CallInst*> inline_sites;
+	//LLVMContext &CTX = F.getContext();
+	//Function *work = &F;
+
 	mod = F.getParent();
 	assert(mod && "F is required to have a parent module");
 	

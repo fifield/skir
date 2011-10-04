@@ -151,7 +151,7 @@ struct SKIRInlineStreamsPass : public FunctionPass {
 			    Instruction *TI = newCI->getParent()->getTerminator();
 			    Value *retVal = ConstantInt::get(Type::getInt32Ty(CTX), 1);
 			    retVal = new IntToPtrInst(retVal, Type::getInt8PtrTy(CTX,0), "", TI);
-			    Instruction *RI = ReturnInst::Create(CTX, retVal, TI);
+			    /*Instruction *RI =*/ ReturnInst::Create(CTX, retVal, TI);
 			    TI->eraseFromParent();
 			}
 			else {

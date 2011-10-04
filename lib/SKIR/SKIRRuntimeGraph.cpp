@@ -438,8 +438,8 @@ SKIRRuntimeGraph::fuseKernels(SKIRRuntimeKernel *kernel0,
 			      SKIRRuntimeKernel *kernel1)
 {
     SKIRFusion fuse(*this);
-    SKIRScheduler *sched = kernel0->sched;
-    ExecutionEngine *cg = kernel0->cg;
+    //SKIRScheduler *sched = kernel0->sched;
+    //ExecutionEngine *cg = kernel0->cg;
 
     assert(kernel0->sched == kernel1->sched);
     assert(kernel0->cg == kernel1->cg);
@@ -630,8 +630,8 @@ SKIRRuntimeGraph::dot(std::ostream &o)
 	for (unsigned int j=0; j<adj[id].size(); j++) {
 	    if (!id2kernel[ adj[id][j] ]) continue;
 	    o << k->id << " -> " << id2kernel[ adj[id][j] ]->id << "\n";
-	    //o << /*k->work->getNameStr() << ":" <<*/ k->id << " -> " \
-	    //	      << id2kernel[ adj[i][j] ]->work->getNameStr() /*<< ":"*/ \
+	    //o << /*k->work->getNameStr() << ":" <<*/ k->id << " -> "
+	    //	      << id2kernel[ adj[i][j] ]->work->getNameStr() /*<< ":"*/
 	    //<< id2kernel[ adj[i][j] ]->id << "\n";
 	}
     }
