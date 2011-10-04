@@ -61,7 +61,7 @@ public:
 		Value *ops[2] = { new BitCastInst(cast_rt_state, voidPtrTy, "", &inst),
 				  new PtrToIntInst(inst.getOperand(0), 
 						   Type::getInt32Ty(CTX), "", &inst) };
-		CallInst *CI = CallInst::Create(f, ops, ops+2, "", &inst);
+		/*CallInst *CI = */CallInst::Create(f, ops, ops+2, "", &inst);
 		ret = true;
 	    }
 	}
