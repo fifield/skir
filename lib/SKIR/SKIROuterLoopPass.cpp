@@ -28,7 +28,7 @@ public:
 
     static char ID;
     SKIROuterLoopPass() : FunctionPass((intptr_t)&ID) {}
-    SKIROuterLoopPass(SKIRRuntimeKernel *k, char *workfn, char *ops)
+    SKIROuterLoopPass(SKIRRuntimeKernel *k, const char *workfn, const char *ops)
 	: FunctionPass((intptr_t)&ID), kernel(k)
     {
 	workfn_suffix = workfn;
@@ -157,14 +157,14 @@ FunctionPass *createSKIROuterLoopPass()
 }
 
 void
-SKIRRuntime::addSKIROuterLoopPass(SKIRRuntimeKernel *k, char *c, char *d)
+SKIRRuntime::addSKIROuterLoopPass(SKIRRuntimeKernel *k, const char *c, const char *d)
 {
     k->fpm->add(new SKIROuterLoopPass(k, c, d));
     k->fpm->add(createVerifierPass());
 }
 
 void
-SKIRRuntime::runSKIROuterLoopPass(SKIRRuntimeKernel *k, char *c, char *d)
+SKIRRuntime::runSKIROuterLoopPass(SKIRRuntimeKernel *k, const char *c, const char *d)
 {
     // run the pass
     Function *F = k->work;

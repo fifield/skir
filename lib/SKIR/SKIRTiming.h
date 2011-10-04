@@ -9,7 +9,7 @@
 #define u64 unsigned long long
 
 #ifdef __x86_64__
-#define DECLARE_ARGS(val, low, high)    unsigned int low, high, val
+#define DECLARE_ARGS(val, low, high)    unsigned int low, high, val=0
 #define EAX_EDX_VAL(val, low, high)     (((u64)low) | (((u64)high) << 32))
 #define EAX_EDX_ARGS(val, low, high)    "a" (low), "d" (high)
 #define EAX_EDX_RET(val, low, high)     "=a" (low), "=d" (high)
