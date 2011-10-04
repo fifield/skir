@@ -101,7 +101,7 @@ __SKIRRT_workfn_inline2_1_1(/*skir_rt_state_t *rt_state, */
 {
     inline_inline_t *s = (inline_inline_t *)kernel_state;
     skir_kernel_ptr_t k = 0;
-    int i;
+    //int i;
 
     //START_TSC(rt_state->cycles);
 
@@ -683,7 +683,7 @@ __SKIRRT_dp_split_work(dp_splitter_work_t *state,
     if (v) return v;
 	
     while (niter--) {
-	int e, i,j;
+	int i,j;
 	for (i=0; i<state->num_streams; i++) {
 	    int rate = state->rate[i];
 	    for (j=0; j<rate; j++) {
@@ -711,7 +711,7 @@ __SKIRRT_dp_join_work(dp_splitter_work_t *state,
 	if (v) return v;
 
 	while (niter--) {
-	    int e, i,j;
+	    int i,j;
 	    for (i=0; i<state->num_streams; i++) {
 		int rate = state->rate[i];
 		for (j=0; j<rate; j++) {

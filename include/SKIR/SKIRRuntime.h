@@ -75,7 +75,7 @@ public:
     static void runSKIRLoweringPasses(SKIRRuntime *p, Module *m);
     static void runSKIRCloneWorkPass(SKIRRuntimeKernel *k, Module *dstMod=0);
     static void runSKIRAddReentriesPass(SKIRRuntimeKernel *k);
-    static void runSKIROuterLoopPass(SKIRRuntimeKernel *k, char *, char *);
+    static void runSKIROuterLoopPass(SKIRRuntimeKernel *k, const char *, const char *);
     static void runSKIRRemovePointerArgsPass(SKIRRuntimeKernel *k);
     static void runSKIRInlineStreamsPass(SKIRRuntimeKernel *k);
     static void runSKIRKernelInfoPass(SKIRRuntimeKernel *K);
@@ -86,7 +86,7 @@ public:
     static void runSKIRKoroPass(SKIRRuntimeKernel *k);
 
     static void addSKIRAddReentriesPass(SKIRRuntimeKernel *k);
-    static void addSKIROuterLoopPass(SKIRRuntimeKernel *k, char *, char *);
+    static void addSKIROuterLoopPass(SKIRRuntimeKernel *k, const char *, const char *);
     static void addSKIRRemovePointerArgsPass(SKIRRuntimeKernel *k);
     static void addSKIRInlineStreamsPass(SKIRRuntimeKernel *k);
     static void addSKIRKernelInfoPass(SKIRRuntimeKernel *K);
