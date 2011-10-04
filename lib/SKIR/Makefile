@@ -20,10 +20,10 @@ include $(LEVEL)/Makefile.common
 OPENCL_CFLAGS=-I$(OPENCL_PATH)/include 
 OPENCL_LDFLAGS=-L$(OPENCL_PATH)/lib/x86_64 -lOpenCL
 
-PROTOBUF_CFLAGS=-pthread -I$(LEVEL)/../../build/lib -I/usr/local/include
+PROTOBUF_CFLAGS=-pthread -I/usr/local/include
 PROTOBUF_LIBS=-pthread -lprotobuf -lz -L/usr/local/lib
 
-CXXFLAGS+=-I$(TBB_PATH)/include -DUSE_OPENCL -DUSE_TBB=$(USE_TBB) $(OPENCL_CFLAGS) $(PROTOBUF_CFLAGS) -I$(LEVEL)/../../src/lib
+CXXFLAGS+=-I$(TBB_PATH)/include -DUSE_OPENCL -DUSE_TBB=$(USE_TBB) $(OPENCL_CFLAGS) $(PROTOBUF_CFLAGS) -I$(LibDir)
 
 #LDFLAGS+=-ltbb_debug -ltbbmalloc_debug -L$(LEVEL)/../tbb/build/debug
 LDFLAGS+=-ltbb -ltbbmalloc -L$(LEVEL)/../tbb/build/release
