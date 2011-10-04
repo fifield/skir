@@ -702,9 +702,9 @@ SKIRRuntime::onEvent(std::stringstream *event)
 	    return false;
 	}
 	
-	printf("kernel req arg id %p\n", req.args());
+	//printf("kernel req arg id %p\n", req.args());
 	void *args = addr_map[ req.args() ];
-	printf("kernel req args %p\n", args);
+	//printf("kernel req args %p\n", args);
 
 	void *k = handleKernelInst(initF, workF, args);
 	
@@ -769,7 +769,7 @@ SKIRRuntime::onEvent(std::stringstream *event)
 	assert(data != MAP_FAILED);
 
 	addr_map[shm_id] = data;
-	printf("new shm id %d = %p n=%d\n", shm_id, data, len);
+	//printf("new shm id %d = %p n=%d\n", shm_id, data, len);
 
 	RequestResponse ret;
 	ret.set_request_id(id);
