@@ -9,8 +9,7 @@ LEVEL=../..
 # Give the name of a library.  This will build a dynamic version.
 #
 LIBRARYNAME=LLVMSKIR
-#DONT_BUILD_RELINKED=1
-#BUILD_ARCHIVE=1
+
 NO_PEDANTIC=1
 
 #

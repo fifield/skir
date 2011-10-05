@@ -10,15 +10,16 @@ LEVEL=../..
 #
 TOOLNAME=skir-lli
 
-LINK_COMPONENTS :=  $(TARGETS_TO_BUILD) bitreader selectiondag scalaropts ipo
-#LINK_COMPONENTS = bitreader core jit native system
+LINK_COMPONENTS := bitreader scalaropts ipo jit instrumentation native asmparser
+
+NO_PEDANTIC=1
+
+USEDLIBS=LLVMSKIR.a
 
 #
 # Include Makefile.common so we know what to do.
 #
 include $(LEVEL)/Makefile.common
-
-#LDFLAGS += -lspe2 -lpthread
 
 OPENCL_CFLAGS=-I$(OPENCL_PATH)/include 
 OPENCL_LDFLAGS=-L$(OPENCL_PATH)/lib/x86_64 -lOpenCL
@@ -29,7 +30,7 @@ OPENCL_LDFLAGS=-L$(OPENCL_PATH)/lib/x86_64 -lOpenCL
 PROTOBUF_CFLAGS=-pthread -I$(LibDir) -I/usr/local/include
 PROTOBUF_LIBS=-pthread -lprotobuf -lz  -levents_pb  -L$(LibDir) -L/usr/local/lib
 
-CXXFLAGS+=-I$(TBB_PATH)/include $(OPENCL_CFLAGS) $(PROTOBUF_CFLAGS) -I$(LEVEL)/../../src/lib
+CXXFLAGS+=-I$(LibDir) -I$(TBB_PATH)/include $(OPENCL_CFLAGS) $(PROTOBUF_CFLAGS) 
 CXXFLAGS+=-I/usr/include/boost -fexceptions
 
 #LDFLAGS+=-ltbb_debug -ltbbmalloc_debug -L$(TBB_PATH)/build/debug 
