@@ -1546,6 +1546,7 @@ void SKIRCWriter::writeOperandWithCast(Value* Operand, const ICmpInst &Cmp) {
   Out << ")";
 }
 
+#if 0
 // generateCompilerSpecificCode - This is where we add conditional compilation
 // directives to cater to specific compilers as need be.
 //
@@ -1678,7 +1679,9 @@ static void generateCompilerSpecificCode(raw_string_ostream& Out,
   // Output target-specific code that should be inserted into main.
   Out << "#define CODE_FOR_MAIN() /* Any target-specific code for main()*/\n";
 }
+#endif
 
+#if 0
 /// FindStaticTors - Given a static ctor/dtor list, unpack its contents into
 /// the StaticTors set.
 static void FindStaticTors(GlobalVariable *GV, std::set<Function*> &StaticTors){
@@ -1699,7 +1702,9 @@ static void FindStaticTors(GlobalVariable *GV, std::set<Function*> &StaticTors){
         StaticTors.insert(F);
     }
 }
+#endif
 
+#if 0
 enum SpecialGlobalClass {
   NotSpecial = 0,
   GlobalCtors, GlobalDtors,
@@ -1724,7 +1729,9 @@ static SpecialGlobalClass getGlobalVariableClass(const GlobalVariable *GV) {
   
   return NotSpecial;
 }
+#endif
 
+#if 0
 // PrintEscapedString - Print each character of the specified string, escaping
 // it if it is not printable or if it is an escape char.
 static void PrintEscapedString(const char *Str, unsigned Length,
@@ -1743,12 +1750,15 @@ static void PrintEscapedString(const char *Str, unsigned Length,
       Out << "\\x" << hexdigit(C >> 4) << hexdigit(C & 0x0F);
   }
 }
+#endif
 
+#if 0
 // PrintEscapedString - Print each character of the specified string, escaping
 // it if it is not printable or if it is an escape char.
 static void PrintEscapedString(const std::string &Str, raw_ostream &Out) {
   PrintEscapedString(Str.c_str(), Str.size(), Out);
 }
+#endif
 
 #if 1
 

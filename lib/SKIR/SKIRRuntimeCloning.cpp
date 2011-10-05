@@ -83,7 +83,7 @@ struct SKIRCloneWorkPass : public FunctionPass {
 						  f->getFunctionType()->getReturnType(),
 						  RI->getReturnValue()->getName(),
 						  RI);
-		    ReturnInst *newRI = ReturnInst::Create(new_work->getContext(), ret, RI);
+		    /*ReturnInst *newRI =*/ ReturnInst::Create(new_work->getContext(), ret, RI);
 		    RI->eraseFromParent();
 		}
 	    }

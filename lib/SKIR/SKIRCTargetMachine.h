@@ -28,7 +28,7 @@ struct SKIRCTargetMachine : public TargetMachine {
                                         formatted_raw_ostream &Out,
                                         CodeGenFileType FileType,
                                         CodeGenOpt::Level OptLevel,
-                                        bool DisableVerify) {}
+                                        bool DisableVerify) { return false; }
   
   virtual const TargetData *getTargetData() const { return 0; }
 };
