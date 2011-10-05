@@ -18,7 +18,7 @@ public:
 
     bool runOnFunction(Function &work);
 
-    void print(raw_ostream &O, const Module*);
+    //void print(raw_ostream &O, const Module*);
 
     Value *getPushRate(unsigned stream) { return getStreamRate(outs, stream); }
     Value *getPopRate(unsigned stream)  { return getStreamRate(ins, stream); }

@@ -184,7 +184,7 @@ public:
 	// replace these with the runtime implementation
 	if (isa<SKIRPushInst>(&CI)) {
 	    static Constant *pushFCache;
-	    Value *me = ConstantInt::get(intPtrType, (uintptr_t)rt);
+	    //Value *me = ConstantInt::get(intPtrType, (uintptr_t)rt);
 	    Value *ops[2] = { CI.getOperand(1),     /* stream */
 			      CI.getOperand(2) };   /* element */
 	    /* void __SKIRRT_push(skir_stream_idx_t p, skir_stream_element_t e) */
@@ -193,7 +193,7 @@ public:
 	}
 	else if (isa<SKIRPopInst>(&CI)) {
 	    static Constant *popFCache;
-	    Value *me = ConstantInt::get(intPtrType, (uintptr_t)rt);
+	    //Value *me = ConstantInt::get(intPtrType, (uintptr_t)rt);
 	    Value *ops[2] = { CI.getOperand(1),     /* stream */
 			      CI.getOperand(2) };   /* element */
 	    /* void __SKIRRT_pop(skir_stream_idx_t p, skir_stream_element_t e) */

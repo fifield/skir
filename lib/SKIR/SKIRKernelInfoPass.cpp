@@ -53,7 +53,8 @@ SKIRKernelInfo::init(SKIRRuntimeKernel *k)
     computed_rates = false;
 }
 
-void 
+#if 0
+void
 SKIRKernelInfo::print(raw_ostream &O, const Module*)
 {
     int nins = getNumIns();
@@ -62,7 +63,7 @@ SKIRKernelInfo::print(raw_ostream &O, const Module*)
     //errs() << "getNumIns():  " << nins << "\n";
     //errs() << "getNumOuts():  " << nouts << "\n";
 
-    for (int i=0; i<nins; i++) {
+    for (int i=0; nins>0 && i<nins; i++) {
 	Value *v = getPopRate(i);
 	O << "in rate " << i << ": ";
 	if (v) O << *v << "\n";
@@ -76,6 +77,7 @@ SKIRKernelInfo::print(raw_ostream &O, const Module*)
 	else O << "unknown\n";
     }
 }
+#endif
 
 #if 0
 void
