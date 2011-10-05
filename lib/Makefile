@@ -8,6 +8,6 @@ LEVEL=..
 #
 # List all of the subdirectories that we will compile.
 #
-DIRS=runtime SKIR
+DIRS=CtoIntr runtime SKIR
 
 include $(LEVEL)/Makefile.common

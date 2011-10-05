@@ -41,33 +41,37 @@ skir-lib: skir-protobuf \
 	$(LibDir)/skir_opencl_mod.bc \
 	$(LibDir)/skir_opencl_mod.ll
 
-$(LibDir)/libinline_stream_ops.so: $(LibDir)/inline_stream_ops.o
-	$(Verb) $(CC) -shared -W1,-soname,libinline_stream_ops.so -o $@ $<
+#$(LibDir)/libinline_stream_ops.so: $(LibDir)/inline_stream_ops.o
+#	$(Verb) $(CC) -shared -W1,-soname,libinline_stream_ops.so -o $@ $<
 
-$(LibDir)/inline_stream_ops.o: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.cpp
-	$(Verb) $(CXX) ${LIBS_CFLAGS} -o $@ $<
+#$(LibDir)/inline_stream_ops.o: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.cpp
+#	$(Verb) $(CXX) ${LIBS_CFLAGS} -o $@ $<
 
 $(LibDir)/inline_stream_ops.c.bc: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.cpp
 	$(Echo) Compiling SKIR Runtime Bitcode Library for $(BuildMode) Build
+	$(Verb) $(MKDIR) $(LibDir)
 	$(Verb) $(LLVMCXX) ${LIBS_CFLAGS} -Wno-div-by-zero -emit-llvm -o $@ $<
 
 $(LibDir)/inline_stream_ops.ll: $(LibDir)/inline_stream_ops.c.bc
-	$(Verb) opt -skir-c-to-intr < $< | opt  -O2 | llvm-dis > $@
+	$(Verb) opt -load=$(LibDir)/CtoIntr.so -skir-c-to-intr < $< | opt  -O2 | llvm-dis > $@
 #	$(Verb) opt -skir-c-to-intr < $< | opt -disable-inlining -std-compile-opts | llvm-dis > $@
 
 $(LibDir)/inline_stream_ops.bc: $(LibDir)/inline_stream_ops.ll
 	$(Verb) llvm-as < $< > $@
 
 $(LibDir)/inline_stream_ops.h: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.h
+	$(Verb) $(MKDIR) $(LibDir)
 	$(Verb) cp $< $@
 
 $(LibDir)/inline_stream_ops.cpp: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.cpp
+	$(Verb) $(MKDIR) $(LibDir)
 	$(Verb) cp $< $@
 
 %.ll: %.bc
 	$(Verb) llvm-dis < $< > $@
 
 $(LibDir)/skir_opencl_mod.bc: $(PROJ_SRC_ROOT)/lib/runtime/skir_opencl_mod.ll
+	$(Verb) $(MKDIR) $(LibDir)
 	$(Echo) Compiling OpenCL Runtime Bitcode Library for $(BuildMode) Build
 	$(Verb) llvm-as < $< > $@
 

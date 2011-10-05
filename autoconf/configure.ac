@@ -31,6 +31,7 @@ AC_CONFIG_MAKEFILE(Makefile)
 AC_CONFIG_MAKEFILE(lib/Makefile)
 AC_CONFIG_MAKEFILE(lib/SKIR/Makefile)
 AC_CONFIG_MAKEFILE(lib/runtime/Makefile)
+AC_CONFIG_MAKEFILE(lib/CtoIntr/Makefile)
 AC_CONFIG_MAKEFILE(tools/Makefile)
 AC_CONFIG_MAKEFILE(tools/skir-lli/Makefile)
 
