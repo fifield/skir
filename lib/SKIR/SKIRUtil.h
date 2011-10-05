@@ -101,8 +101,8 @@ getInlineCode(Module *mod, const char *Fn)
 	 return C;
      
      if (!inline_module) {
-	 std::string skir_root(getenv("SKIR_ROOT"));
-	 std::string filename(skir_root+"/skir/build/lib/inline_stream_ops.bc");
+	 std::string skir_root(getenv("SKIR_OBJ_ROOT"));
+	 std::string filename(skir_root+"/lib/inline_stream_ops.bc");
 	 std::string errormsg;
 	 if (MemoryBuffer *buffer = MemoryBuffer::getFileOrSTDIN(filename, &errormsg)) {
 	     inline_module = ParseBitcodeFile(buffer, mod->getContext(), &errormsg);
@@ -114,7 +114,7 @@ getInlineCode(Module *mod, const char *Fn)
 		 errs() << errormsg << "\n";
 	     else
 		 errs() << "bitcode didn't read correctly.\n";
-	     assert(0);
+	     assert(0 && "Couldn't parse SKIR_OBJ_ROOT/lib/inline_stream_ops.bc");
 	     return 0;
 	 }
 	 

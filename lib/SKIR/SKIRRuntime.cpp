@@ -432,8 +432,8 @@ SKIRRuntime::initialize(int nthreads)
     InitializeNativeTarget();
 
     // load the runtime bitcode library
-    string skir_root(getenv("SKIR_ROOT"));
-    string filename = skir_root+"/skir/build/lib/inline_stream_ops.bc";
+    string skir_root(getenv("SKIR_OBJ_ROOT"));
+    string filename = skir_root+"/lib/inline_stream_ops.bc";
     if (MemoryBuffer *buffer = MemoryBuffer::getFileOrSTDIN(filename, &errormsg)) {
 	setModule(ParseBitcodeFile(buffer, CTX, &errormsg));
 	delete buffer;
@@ -442,7 +442,7 @@ SKIRRuntime::initialize(int nthreads)
 	errs() << "bitcode: '" << filename << "' didn't read correctly:";
 	if (errormsg.size()) errs() << errormsg;
 	errs() << "\n";
-	assert(0);
+	assert(0 && "Failed to read SKIR_OBJ_ROOT/lib/inline_stream_ops.bc");
     }
 
     // If we are supposed to override the target triple for the host, do so now.
