@@ -34,7 +34,7 @@ include $(tbb_root)/build/common.inc
 #According to documentation submakes should run in parallel
 .NOTPARALLEL: tbb tbbmalloc
 
-default: tbb tbbmalloc
+default: tbb tbbmalloc tbb_debug tbbmalloc_debug
 
 #all: tbb tbbmalloc test examples
 
@@ -43,18 +43,26 @@ all:: default
 tbb_debug: mkdir
 	$(Echo) Compiling TBB Debug build
 	$(MAKE) -C "$(work_dir)_debug"  -r -f $(tbb_root)/build/Makefile.tbb cfg=debug tbb_root=$(tbb_root)
-	$(Verb) cd $(tbb_build_dir) && ln -sf "$(tbb_build_prefix)_debug" debug
+	$(Verb) $(MKDIR) $(LibDir)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_debug/libtbb_debug.so $(LibDir)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_debug/libtbb_debug.so.2 $(LibDir)
 
 tbb: mkdir
 	$(Echo) Compiling TBB Release build
 	$(MAKE) -C "$(work_dir)_release"  -r -f $(tbb_root)/build/Makefile.tbb cfg=release tbb_root=$(tbb_root)
-	$(Verb) cd $(tbb_build_dir) && ln -sf "$(tbb_build_prefix)_release" release
+	$(Verb) $(MKDIR) $(LibDir)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_release/libtbb.so $(LibDir)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_release/libtbb.so.2 $(LibDir)
 
 tbbmalloc_debug: mkdir
 	$(MAKE) -C "$(work_dir)_debug"  -r -f $(tbb_root)/build/Makefile.tbbmalloc cfg=debug malloc tbb_root=$(tbb_root)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_debug/libtbbmalloc_debug.so $(LibDir)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_debug/libtbbmalloc_debug.so.2 $(LibDir)
 
 tbbmalloc: mkdir
 	$(MAKE) -C "$(work_dir)_release"  -r -f $(tbb_root)/build/Makefile.tbbmalloc cfg=release malloc tbb_root=$(tbb_root)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_release/libtbbmalloc.so $(LibDir)
+	$(Verb) cp $(tbb_build_dir)/$(tbb_build_prefix)_release/libtbbmalloc.so.2 $(LibDir)
 
 test: tbb tbbmalloc
 	-$(MAKE) -C "$(work_dir)_debug"  -r -f $(tbb_root)/build/Makefile.tbbmalloc cfg=debug malloc_test tbb_root=$(tbb_root)
