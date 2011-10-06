@@ -28,6 +28,7 @@ AC_CONFIG_FILES(Makefile.common)
 dnl Configure project makefiles
 dnl List every Makefile that exists within your source tree
 AC_CONFIG_MAKEFILE(Makefile)
+AC_CONFIG_MAKEFILE(deps/Makefile)
 AC_CONFIG_MAKEFILE(lib/Makefile)
 AC_CONFIG_MAKEFILE(lib/SKIR/Makefile)
 AC_CONFIG_MAKEFILE(lib/runtime/Makefile)

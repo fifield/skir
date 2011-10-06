@@ -1718,6 +1718,9 @@ ac_config_files="$ac_config_files Makefile.common"
 ac_config_commands="$ac_config_commands Makefile"
 
 
+ac_config_commands="$ac_config_commands deps/Makefile"
+
+
 ac_config_commands="$ac_config_commands lib/Makefile"
 
 
@@ -2463,6 +2466,7 @@ do
     "setup") CONFIG_COMMANDS="$CONFIG_COMMANDS setup" ;;
     "Makefile.common") CONFIG_FILES="$CONFIG_FILES Makefile.common" ;;
     "Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS Makefile" ;;
+    "deps/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS deps/Makefile" ;;
     "lib/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/Makefile" ;;
     "lib/SKIR/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/SKIR/Makefile" ;;
     "lib/runtime/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/runtime/Makefile" ;;
@@ -2886,6 +2890,8 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
   case $ac_file$ac_mode in
     "Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/Makefile Makefile ;;
+    "deps/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname deps/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/deps/Makefile deps/Makefile ;;
     "lib/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname lib/Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/lib/Makefile lib/Makefile ;;
     "lib/SKIR/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname lib/SKIR/Makefile`
