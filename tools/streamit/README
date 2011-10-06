@@ -1,0 +1,12 @@
+
+known issues
+------------
+
+- array sizes that variables (i.e. int sz = 10; int[sz] a;) are not allowed.
+  for limited support like streamit has, we'd need a constant prop pass on the front end.
+
+- portals not supported in any way
+
+- paramaterized filters (i.e. the ones that look like c++ templates) not supported
+
+

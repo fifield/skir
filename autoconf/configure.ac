@@ -35,6 +35,7 @@ AC_CONFIG_MAKEFILE(lib/runtime/Makefile)
 AC_CONFIG_MAKEFILE(lib/CtoIntr/Makefile)
 AC_CONFIG_MAKEFILE(tools/Makefile)
 AC_CONFIG_MAKEFILE(tools/skir-lli/Makefile)
+AC_CONFIG_MAKEFILE(tools/streamit/Makefile)
 
 dnl **************************************************************************
 dnl * Determine which system we are building on

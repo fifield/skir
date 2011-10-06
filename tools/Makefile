@@ -8,6 +8,6 @@ LEVEL=..
 #
 # List all of the subdirectories that we will compile.
 #
-DIRS=skir-lli
+DIRS=skir-lli streamit
 
 include $(LEVEL)/Makefile.common
