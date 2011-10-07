@@ -41,7 +41,7 @@ main(int argc, char *argv[])
     __SKIR_call(h, ins, outs);
     //ins[0] = outs[0];
 
-    for (i=1; i<num_hello-1; i++) {
+    for (i=1; i<num_hello; i++) {
 	h = __SKIR_kernel((void*)hello_init, (void*)hello_work, &i);
 	//outs[0] = __SKIR_stream(sizeof(int));
 	__SKIR_call(h, ins, outs);

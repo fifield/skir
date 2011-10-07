@@ -3,7 +3,7 @@
 ##
 ##
 LEVEL = ../..
-DIRS = streamit
+DIRS = c streamit
 
 #
 # Include the Master Makefile that knows how to build all.

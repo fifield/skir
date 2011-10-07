@@ -1,9 +1,24 @@
 
-CORRECTNESS=1
+##
+##
+##
+LEVEL = ../../..
 
-all: exe test
+SKIR_OPT_LVL=2
+SKIR_DEFS=-DCORRECTNESS=1
+SKIR_OUT=./output
 
-include ./Makefile_c
+#
+# Include the Master Makefile that knows how to build all.
+#
+include $(LEVEL)/Makefile.common
+include ../../Makefile.SKIR
+
+check-local:: fir_pipe-skir.log
+
+# clean
+clean::
+	rm -f *.bc *.log *.run *.ll *.dot
 
 # RUNS
 
@@ -28,7 +43,9 @@ blackscholes-skir.run: blackscholes-opt.bc
 #blackscholes-skir.log: blackscholes-opt.run
 
 # LOGS
+
 %.log: %.run
 	rm -f $@
-	sh $< 2>&1 | head -n 10000 | tee $@ 
-	../fdiff.py $@ output/$@
+	sh $< 2>&1 | tee $@
+	$(PROJ_SRC_ROOT)/test/correctness/fdiff.py $@ \
+		$(PROJ_SRC_ROOT)/test/correctness/c/output/$@

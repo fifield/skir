@@ -11,7 +11,7 @@ endif
 #SKIR_LLI     = $(ToolDir)/skir-lli -force-single -n 1
 SKIR_LLI      = $(ToolDir)/skir-lli -n ${NTHREADS}
 SKIR_STREAMIT = $(ToolDir)/streamit
-SKIR_INC      = ${SKIR_DIR}/src/llvm/include/SKIR
+SKIR_INC      = $(LibDir)
 SKIR_OPT      = $(ToolDir)/skir-opt
 
 ifndef SKIR_OPT_LVL

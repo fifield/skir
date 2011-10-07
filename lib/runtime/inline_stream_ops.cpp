@@ -592,7 +592,7 @@ __SKIRRT_workfn_nocheck_1_1(skir_rt_state_t   *rt_state,
     volatile size_t *real_tail = &(ins[0]->tail);
 
     //    i = __SKIRRT_inline_compute_niters_E_B_<4,16384>(&v, ins, 1, outs, 1);
-    i = __SKIRRT_inline_compute_niters_E_B_<8,32768>(&v, ins, 1, outs, 1);
+    i = __SKIRRT_inline_compute_niters_E_B_<4,32768>(&v, ins, 1, outs, 1);
     //i = __SKIRRT_inline_compute_niters_E_B_<4,128>(&v, ins, 1, outs, 1);
     if (v) return v;
 
