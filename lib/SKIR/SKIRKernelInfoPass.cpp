@@ -112,7 +112,8 @@ SKIRKernelInfo::tryKnownRates(Function &work)
 	pos += nout_str.length()+3;
 	std::string arg_str(name.substr(pos, name.find("E",pos)-pos));
 	int arg = atoi(arg_str.c_str());
-	
+	if (!nout || !arg) return false;
+
 	for (int i=0; i<nout; i++)
 	    kernel->rt_outs[i]->setPushRate(arg);
 	kernel->rt_ins[0]->setPopRate(arg*nout);
@@ -130,6 +131,7 @@ SKIRKernelInfo::tryKnownRates(Function &work)
 	pos += nin_str.length()+3;
 	std::string arg_str(name.substr(pos, name.find("E",pos)-pos));
 	int arg = atoi(arg_str.c_str());
+	if (!arg) return false;
 	
 	for (int i=0; i<nin; i++)
 	    kernel->rt_ins[i]->setPopRate(arg);
@@ -145,7 +147,8 @@ SKIRKernelInfo::tryKnownRates(Function &work)
 	pos += strlen("split_dup_work_N_ILi");
 	std::string nout_str(name.substr(pos, name.find("E", pos)-pos));
 	int nout = atoi(nout_str.c_str());
-	
+        if (!nout) return false;
+
 	for (int i=0; i<nout; i++)
 	    kernel->rt_outs[i]->setPushRate(1);
 	kernel->rt_ins[0]->setPopRate(nout);
