@@ -9,7 +9,7 @@
 #include <math.h>
 #include <sys/time.h>
 
-#include <SKIRStream.h>
+#include <SKIR/SKIRStream.h>
 #include "skir_intrinsics.h"
 
 #include <sstream>
