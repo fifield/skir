@@ -1,0 +1,36 @@
+
+int -> int filter bar(int A)
+{
+  work {
+    push(A+pop());
+  }
+}
+
+void->int filter IntSource {
+  int x;
+  init { x = 0; }
+  work push 1 { 
+    push(x); 
+    x = x + 1;
+  }
+}
+
+int->void filter IntPrinter {
+  work pop 1 { println(pop()); }
+}
+
+int -> int splitjoin foo(int N) {
+    split duplicate;
+//    split roundrobin(3);
+    for (int i=0; i<N; i++) {
+        add bar(1);
+    }
+    join roundrobin;
+}
+
+void -> void pipeline test
+{
+    add IntSource;
+    add foo(3);
+    add IntPrinter;
+}

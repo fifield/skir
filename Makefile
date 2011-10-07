@@ -8,11 +8,10 @@
 # Indicates our relative path to the top of the project's root directory.
 #
 LEVEL = .
-DIRS = deps lib tools
+DIRS = deps lib tools test
 EXTRA_DIST = include
 
 #
 # Include the Master Makefile that knows how to build all.
 #
 include $(LEVEL)/Makefile.common
-

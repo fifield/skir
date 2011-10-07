@@ -1,0 +1,42 @@
+
+static {
+    int[3][2] B;
+    init {
+      B[1][0] = 20;
+      B[1][1] = 21;
+      B[2][0] = 30;
+      B[2][1] = 31;
+    }
+}
+
+int->void filter IntSink
+{
+  work pop 0 push 1 {
+    int i = pop();
+    println(i);
+  }
+}
+
+void->void pipeline test_array 
+{
+  add ArrayTest;
+  add IntSink;
+}
+
+void->int filter ArrayTest {
+
+  int[3][2] A = { {10,11},
+                  {-1,-2},
+                  {14,15} };
+
+  work push 2 pop 0 {
+    for (int i=0; i<3; i++) {
+      for (int j=0; j<2; j++) {
+        int a = A[i][j];
+        int b = B[i][j];
+        push(a);
+        push(b);
+      }
+    }
+  }
+}

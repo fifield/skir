@@ -1,0 +1,65 @@
+
+
+##
+##
+##
+
+ifndef NTHREADS
+  NTHREADS      = 1
+endif
+
+#SKIR_LLI     = $(ToolDir)/skir-lli -force-single -n 1
+SKIR_LLI      = $(ToolDir)/skir-lli -n ${NTHREADS}
+SKIR_STREAMIT = $(ToolDir)/streamit
+SKIR_INC      = ${SKIR_DIR}/src/llvm/include/SKIR
+SKIR_OPT      = $(ToolDir)/skir-opt
+
+ifndef SKIR_OPT_LVL
+  SKIR_OPT_LVL=0
+endif
+
+ifndef SKIR_DEFS
+  SKIR_DEFS=
+endif
+
+# flags to llvm-g++
+CXX_FLAGS=-O${SKIR_OPT_LVL} ${SKIR_DEFS} -fPIC -fno-exceptions -I${SKIR_INC}
+
+# flags to llvm-gcc
+CC_FLAGS=-O${SKIR_OPT_LVL} ${SKIR_DEFS} -I${SKIR_INC}
+
+# flags to skir-opt
+ifndef OPT_FLAGS
+  OPT_FLAGS=-O2
+endif
+
+.SECONDARY:
+
+%.log: %.run
+	rm -f $@
+	sh $< 2>&1 | tee $@
+
+#%.run: %.bc
+#	echo "${SKIR_LLI} $<" > $@
+
+%.ll: %.bc
+	llvm-dis < $< > $@
+
+%-skir.bc: %.bc
+	opt -load=$(LibDir)/CtoIntr.so -skir-c-to-intr < $< > $@
+
+%-opt.bc: %-skir.bc
+	opt ${OPT_FLAGS} < $< > $@
+
+%.bc: %.cpp
+	$(LLVMGXX) ${CXX_FLAGS} -emit-llvm -c -o $@ $<
+
+%.bc: %.c
+	$(LLVMGCC) ${CC_FLAGS} -emit-llvm -c -o $@ $<
+
+#streamit.bc: ${SKIR_DIR}/src/lib/streamit.cpp
+#	$(LLVMGXX) -O3 ${SKIR_DEFS} -fPIC -fno-exceptions -I${SKIR_INC} -emit-llvm -c -o $@ $<
+
+ref_clean:
+	rm -rf ref/tmp ref/*.java ref/*.exe ref/*.log
+	rm -f *.log *.bc *.run *.ll *.dot cluster-config.txt
