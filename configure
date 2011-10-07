@@ -1733,10 +1733,28 @@ ac_config_commands="$ac_config_commands lib/runtime/Makefile"
 ac_config_commands="$ac_config_commands lib/CtoIntr/Makefile"
 
 
+ac_config_commands="$ac_config_commands test/Makefile"
+
+
+ac_config_commands="$ac_config_commands test/Makefile.SKIR"
+
+
+ac_config_commands="$ac_config_commands test/correctness/Makefile"
+
+
+ac_config_commands="$ac_config_commands test/correctness/c/Makefile"
+
+
+ac_config_commands="$ac_config_commands test/correctness/streamit/Makefile"
+
+
 ac_config_commands="$ac_config_commands tools/Makefile"
 
 
 ac_config_commands="$ac_config_commands tools/skir-lli/Makefile"
+
+
+ac_config_commands="$ac_config_commands tools/streamit/Makefile"
 
 
 
@@ -2471,8 +2489,14 @@ do
     "lib/SKIR/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/SKIR/Makefile" ;;
     "lib/runtime/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/runtime/Makefile" ;;
     "lib/CtoIntr/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/CtoIntr/Makefile" ;;
+    "test/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS test/Makefile" ;;
+    "test/Makefile.SKIR") CONFIG_COMMANDS="$CONFIG_COMMANDS test/Makefile.SKIR" ;;
+    "test/correctness/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS test/correctness/Makefile" ;;
+    "test/correctness/c/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS test/correctness/c/Makefile" ;;
+    "test/correctness/streamit/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS test/correctness/streamit/Makefile" ;;
     "tools/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS tools/Makefile" ;;
     "tools/skir-lli/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS tools/skir-lli/Makefile" ;;
+    "tools/streamit/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS tools/streamit/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5 ;;
   esac
@@ -2900,10 +2924,22 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/lib/runtime/Makefile lib/runtime/Makefile ;;
     "lib/CtoIntr/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname lib/CtoIntr/Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/lib/CtoIntr/Makefile lib/CtoIntr/Makefile ;;
+    "test/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/test/Makefile test/Makefile ;;
+    "test/Makefile.SKIR":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/Makefile.SKIR`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/test/Makefile.SKIR test/Makefile.SKIR ;;
+    "test/correctness/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/correctness/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/test/correctness/Makefile test/correctness/Makefile ;;
+    "test/correctness/c/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/correctness/c/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/test/correctness/c/Makefile test/correctness/c/Makefile ;;
+    "test/correctness/streamit/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/correctness/streamit/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/test/correctness/streamit/Makefile test/correctness/streamit/Makefile ;;
     "tools/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname tools/Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/tools/Makefile tools/Makefile ;;
     "tools/skir-lli/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname tools/skir-lli/Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/tools/skir-lli/Makefile tools/skir-lli/Makefile ;;
+    "tools/streamit/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname tools/streamit/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/tools/streamit/Makefile tools/streamit/Makefile ;;
 
   esac
 done # for ac_tag
