@@ -39,7 +39,9 @@ skir-lib: skir-protobuf \
 	$(LibDir)/inline_stream_ops.bc \
 	$(LibDir)/inline_stream_ops.ll \
 	$(LibDir)/skir_opencl_mod.bc \
-	$(LibDir)/skir_opencl_mod.ll
+	$(LibDir)/skir_opencl_mod.ll \
+	$(LibDir)/skir_intrinsics.h \
+	$(LibDir)/SKIR.hpp
 
 #$(LibDir)/libinline_stream_ops.so: $(LibDir)/inline_stream_ops.o
 #	$(Verb) $(CC) -shared -W1,-soname,libinline_stream_ops.so -o $@ $<
@@ -60,6 +62,14 @@ $(LibDir)/inline_stream_ops.bc: $(LibDir)/inline_stream_ops.ll
 	$(Verb) llvm-as < $< > $@
 
 $(LibDir)/inline_stream_ops.h: $(PROJ_SRC_ROOT)/lib/runtime/inline_stream_ops.h
+	$(Verb) $(MKDIR) $(LibDir)
+	$(Verb) cp $< $@
+
+$(LibDir)/skir_intrinsics.h: $(PROJ_SRC_ROOT)/lib/runtime/skir_intrinsics.h
+	$(Verb) $(MKDIR) $(LibDir)
+	$(Verb) cp $< $@
+
+$(LibDir)/SKIR.hpp: $(PROJ_SRC_ROOT)/lib/runtime/SKIR.hpp
 	$(Verb) $(MKDIR) $(LibDir)
 	$(Verb) cp $< $@
 
