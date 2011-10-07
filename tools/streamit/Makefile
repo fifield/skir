@@ -32,7 +32,7 @@ $(LibDir)/streamit.bc: $(PROJ_SRC_ROOT)/tools/streamit/streamit.cpp
 StreamItLex.cpp: StreamItLex.g
 	java -classpath /usr/share/java:/usr/share/java/antlr.jar antlr.Tool $<
 
-StreamItParserFE.cpp: StreamItParserFE.g
+StreamItParserFE.cpp: StreamItParserFE.g StreamItLex.cpp
 	java -classpath /usr/share/java:/usr/share/java/antlr.jar antlr.Tool $<
 
 clean::
