@@ -498,8 +498,6 @@ SKIRRuntime::initialize(int nthreads)
 
     sys::DynamicLibrary::LoadLibraryPermanently("/lib/libc.so.6");
     sys::DynamicLibrary::LoadLibraryPermanently("/usr/lib/libstdc++.so.6");
-    //std::string skir_root(getenv("SKIR_ROOT"));
-    //std::string filename(skir_root+"/skir/libinline_stream_ops.so");
 
     // runtime entry points
     typedef void (*vfp)(void);

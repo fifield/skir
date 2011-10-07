@@ -64,7 +64,8 @@ main(int argc, char *argv[])
     mod->setTargetTriple("x86_64-unknown-linux-gnu");
 
     // open library module
-    string libfile("streamit.bc");
+    string skir_root(getenv("SKIR_OBJ_ROOT"));
+    string libfile(skir_root+"/lib/streamit.bc");
     string errormsg;
     Module *lib;
     if (MemoryBuffer *buffer = MemoryBuffer::getFileOrSTDIN(libfile, &errormsg)) {

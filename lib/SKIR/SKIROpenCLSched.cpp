@@ -365,9 +365,9 @@ SKIROpenCLSched::getCLModule()
 {
     if (!opencl_module) {
 	// load the runtime bitcode library
-	std::string skir_path(getenv("SKIR_ROOT"));
+	std::string skir_path(getenv("SKIR_OBJ_ROOT"));
 	std::string errormsg;
-	skir_path = skir_path + "/skir/build/lib/skir_opencl_mod.bc";
+	skir_path = skir_path + "/lib/skir_opencl_mod.bc";
 	if (MemoryBuffer *buffer = MemoryBuffer::getFileOrSTDIN(skir_path, &errormsg)) {
 	    setCLModule(ParseBitcodeFile(buffer, getCLContext(), &errormsg));
 	    delete buffer;
