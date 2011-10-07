@@ -21,7 +21,6 @@ int->void filter IntPrinter {
 
 int -> int splitjoin foo(int N) {
     split duplicate;
-//    split roundrobin(3);
     for (int i=0; i<N; i++) {
         add bar(1);
     }

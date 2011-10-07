@@ -176,6 +176,7 @@ SPLIT_DUP(8)
 SPLIT_DUP(6)
 SPLIT_DUP(4)
 SPLIT_DUP(2)
+SPLIT_DUP(0)
 
 #undef SPLIT_DUP
 
@@ -208,7 +209,12 @@ __streamit__splitdupN_work (void *s, skir_stream_ptr_t ins[], skir_stream_ptr_t 
     SPLIT_DUP(4);
     SPLIT_DUP(2);
 
-    printf("ERROR UNSUPPORTED split dup (%d)\n", num);
+    //fprintf(stderr, "WARNING: Unoptimized split dup (%d)\n", num-2);
+    void *k = __SKIR_kernel( (void*)noop_init,
+                             (void *)(split_dup_work_0),
+                             new split_dup_t(num-2) );
+    __SKIR_call(k, (void **)ins, (void **)outs);
+
     return 1;
 }
 
@@ -567,6 +573,7 @@ JOIN_RR(6,8)
 JOIN_RR(8,8)
 JOIN_RR(6,3)
 JOIN_RR(2,32)
+JOIN_RR(0,0)
 
 #undef JOIN_RR
 
@@ -612,7 +619,14 @@ __streamit__joinrrN_work(void *s, skir_stream_t* ins[], skir_stream_t* outs[])
     JOIN_RR(6,8)
     JOIN_RR(6,3)
     JOIN_RR(2,32)
-    printf("ERROR UNSUPPORTED join round robin (%d, %d)\n", num-2, arg);
+
+    //fprintf(stderr, "WARNING: Unoptimized join round robin (%d, %d)\n", num-2, arg);
+
+    void *k = __SKIR_kernel( (void*)noop_init,
+                             (void *)(join_rr_work_0_0),
+                             new join_rr_t(num-2, arg));
+    __SKIR_call(k, (void **)ins, (void **)outs);
+
     return 1;
 }
 
@@ -655,14 +669,11 @@ __streamit__joinrrW_work(void *s, skir_stream_t* ins[], skir_stream_t* outs[])
     int arg1 = state->weights[1];
     int arg2 = state->weights[2];
 
-    //if (num == 3) {
-
-	JOIN_RR(1,63,0);
-	JOIN_RR(64,64,0);
-	JOIN_RR(64,8,3);
-	JOIN_RR(32,32,0);
-	JOIN_RR(1,16,0)
-	//}
+    JOIN_RR(1,63,0);
+    JOIN_RR(64,64,0);
+    JOIN_RR(64,8,3);
+    JOIN_RR(32,32,0);
+    JOIN_RR(1,16,0)
 
     printf("ERROR UNSUPPORTED join round robin (%d, %d %d %d)\n", num, arg0, arg1, arg2);
     return 1;

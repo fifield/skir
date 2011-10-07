@@ -54,8 +54,7 @@ clean_streamit:
 # simple streamit tests
 #
 
-test_simple_streamit: test_array-skir.log 
-#test_sj-skir.log test_pipe-skir.log test_anon-skir.log
+test_simple_streamit: test_array-skir.log test_pipe-skir.log test_anon-skir.log test_sj-skir.log
 
 %.bc: %.str
 	${SKIR_STREAMIT} < $< | llvm-as > $@
@@ -71,9 +70,6 @@ test_pipe-skir.run: test_pipe-skir.bc
 
 test_anon-skir.run: test_anon-skir.bc
 	echo "${SKIR_LLI} $< | head -n 10" > $@
-
-# %.str: $(PROJ_SRC_ROOT)/test/correctness/streamit/%.str
-# 	cp $< $@
 
 %.log: %.run
 	rm -f $@
