@@ -26,14 +26,6 @@ public:
 	stream = __SKIR_stream(size);
     }
 
-    StreamBase(void *begin, void *end, int size, int stride) { 
-	stream = __SKIR_array(begin, end, size, stride);
-    }
-
-    StreamBase(void *begin, void *end, int size) { 
-	stream = __SKIR_array(begin, end, size, size);
-    }
-
     StreamBase(StreamPtr *, int i) : offset(i) {}
 
     inline int getOffset() { return offset; }
@@ -71,10 +63,6 @@ public:
 	return t;
     }
 };
-
-extern "C" {
-static void *__Kernel_init(void *a)  { return a; }
-}
 
 template <class D> class Kernel
 {
@@ -118,7 +106,7 @@ public:
 
     // create kernel
     Kernel(void) {
-	kernel = __SKIR_kernel((void*)(&__Kernel_init), (void*)(&D::work), this);
+	kernel = __SKIR_kernel((void*)(&D::work), this);
     }
 
     ~Kernel(void) {

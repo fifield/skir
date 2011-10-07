@@ -17,14 +17,12 @@ typedef void* skir_kernel_ptr_t;
 extern void __SKIR_call(void *s, skir_stream_ptr_t ins[], skir_stream_ptr_t outs[]);
 extern void __SKIR_wait(void *s);
 extern skir_stream_ptr_t __SKIR_stream(int size);
-extern skir_stream_ptr_t __SKIR_array(void *begin, void *end, \
-				      unsigned int size, unsigned int stride);
 
 extern void __SKIR_push(skir_stream_idx_t s, skir_stream_element_t e);
 extern void __SKIR_pop (skir_stream_idx_t s, skir_stream_element_t e);
 extern void __SKIR_peek(skir_stream_idx_t s, skir_stream_element_t e, unsigned int offset);
 
-extern void* __SKIR_kernel(void *initfn, void *workfn, void *args);
+extern void* __SKIR_kernel(void *workfn, void *args);
 
 extern unsigned long long __SKIR_rdtsc(void);
 

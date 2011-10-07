@@ -33,9 +33,8 @@ message IncludeModuleRequest {
 
 message KernelRequest {
   required uint32 request_id = 1;
-  optional string init = 2;
-  optional string work = 3;
-  optional uint32 args = 4;
+  optional string work = 2;
+  optional uint32 args = 3;
 }
 
 message CallRequest {

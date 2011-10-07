@@ -41,12 +41,11 @@ extern "C" {
 #include <stdio.h>
 
 /* these are defined at the end of this file */
-void *__SKIRRT_kernel(void *me, void *init, void *work, void *args);
+void *__SKIRRT_kernel(void *me, void *work, void *args);
 void __SKIRRT_call(void *me, void *kernel, void *in_streams, void *out_stream);
 void __SKIRRT_wait(void *me, void *kernel);
 void __SKIRRT_become(void *me, void *k, void *in_streams, void *out_stream);
 void *__SKIRRT_stream(void *me, unsigned int elem_size);
-void *__SKIRRT_array(void *me, void *begin, void *end, unsigned int elem_size, unsigned int stride);
 void __SKIR_push(skir_stream_idx_t p, skir_stream_element_t e);
 void __SKIR_pop(skir_stream_idx_t p, skir_stream_element_t e);
 
@@ -97,36 +96,30 @@ SKIRRuntime::setVerbose(bool v)
 
 // 
 // Implementation of the skir.kernel instruction.
-// The arguments are a pointer to the init function, a pointer to the work
-// function and a pointer to the argument to the init function.
+// The arguments are a pointer to the work
+// function and a pointer to the argument to the kernel.
 // The main job of the kernel instruction is to construct the runtime's 
-// internal representation of the kernel and call the init function.
+// internal representation of the kernel.
 //
 void *
-SKIRRuntime::handleKernelInst(Function *init, Function *work, void *args)
+SKIRRuntime::handleKernelInst(Function *work, void *args)
 {
     SKIRRuntimeKernel *k = new SKIRRuntimeKernel(nextKernelID());
 
-    // set the work function
+    // setup the work function
     k->base_work = k->work = work;
-
-    // set the init function
-    k->base_init = k->init = init;
-
-    // run the kernel's init function
-    runInitFunction(k, args);
+    k->state = args;
 
     return (void *)k;
 }
 
 void *
-SKIRRuntime::handleKernelInst(void *init, void *work, void *args)
+SKIRRuntime::handleKernelInst(void *work, void *args)
 {
     Function *w = fn_map[work];
-    Function *i = fn_map[init];
-    assert(i&&w);
+    assert(w);
 
-    return handleKernelInst(i, w, args);
+    return handleKernelInst(w, args);
 }
 
 
@@ -329,16 +322,6 @@ SKIRRuntime::handleBecomeInst(void *k, void *is, void *os)
     getSG()->callKernel(new_rtk);
 }
 
-void
-SKIRRuntime::runInitFunction(SKIRRuntimeKernel *k, void *args)
-{
-    void *init = getCG()->getPointerToFunction(k->init);
-    
-    // call k->init() on host
-    init_function* initfn = reinterpret_cast<init_function*>(reinterpret_cast<uintptr_t>(init));
-    k->state = initfn(args);
-}
-
 //
 // Allocate a new SKIRRuntimeStream
 //
@@ -359,23 +342,6 @@ SKIRRuntime::handleStreamInst(unsigned elem_size)
     rs->type = SKIRRuntimeStream::NATIVE;
     rs->elem_size = elem_size;
     return (void *)rs;
-}
-
-//
-// implement skir.array instruction
-//
-void *
-SKIRRuntime::handleArrayInst(void *begin, void *end, unsigned elem_size, unsigned stride)
-{
-    SKIRRuntimeStream *rs = newStream();
-    assert(0 && "array inst");
-    //rs->type = ARRAY;
-    rs->begin = begin;
-    rs->end = end;
-    rs->stride = stride;
-    rs->elem_size = elem_size;
-    return (void *)rs;
-
 }
 
 void
@@ -504,7 +470,6 @@ SKIRRuntime::initialize(int nthreads)
     addSymbol("__SKIRRT_would_block", (vfp)__SKIRRT_would_block);
     addSymbol("__SKIRRT_kernel", (vfp)__SKIRRT_kernel);
     addSymbol("__SKIRRT_stream", (vfp)__SKIRRT_stream);
-    addSymbol("__SKIRRT_array", (vfp)__SKIRRT_array);
     addSymbol("__SKIRRT_call", (vfp)__SKIRRT_call);
     addSymbol("__SKIRRT_wait", (vfp)__SKIRRT_wait);
     addSymbol("__SKIR_push", (vfp)__SKIR_push);
@@ -674,16 +639,11 @@ SKIRRuntime::onEvent(std::stringstream *event)
 
 	// find work and init functions
 	Function *workF = getModule()->getFunction(req.work());
-	Function *initF = getModule()->getFunction(req.init());
 	//void *workfn = getCG()->getPointerToFunction(workF);
-	//void *initfn = getCG()->getPointerToFunction(initF);
 	
-	if (!workF || !initF) {
+	if (!workF) {
 	    std::stringstream ss;
-	    if (!workF)
-		ss << "KernelRequest: workfn '" << req.work() << "' not found\n";
-	    if (!initF)
-		ss << "KernelRequest: initfn '" << req.init() << "' not found\n";
+            ss << "KernelRequest: workfn '" << req.work() << "' not found\n";
 
 	    if (verbose)
 		errs() << ss.str();
@@ -704,7 +664,7 @@ SKIRRuntime::onEvent(std::stringstream *event)
 	void *args = addr_map[ req.args() ];
 	//printf("kernel req args %p\n", args);
 
-	void *k = handleKernelInst(initF, workF, args);
+	void *k = handleKernelInst(workF, args);
 	
 	unsigned int id = req.request_id();
 	addr_map[id] = k;
@@ -991,12 +951,12 @@ SKIRRuntime::run(std::string InputFile, std::vector<std::string> InputArgv,
 
 extern "C" 
 {
-    // void * @llvm.skir.kernel(void *runtime, void *init, void *work)
+    // void * @llvm.skir.kernel(void *runtime, void *work)
     void *
-    __SKIRRT_kernel(void *me, void *init, void *work, void *args)
+    __SKIRRT_kernel(void *me, void *work, void *args)
     {
 	SKIRRuntime *rt = (SKIRRuntime *)me;
-	return rt->handleKernelInst(init, work, args);
+	return rt->handleKernelInst(work, args);
     }
 
     void 
@@ -1013,19 +973,11 @@ extern "C"
 	rt->handleWaitInst(kernel);
     }
 
-
     void *
     __SKIRRT_stream(void *me, unsigned int elem_size)
     {
 	SKIRRuntime *rt = (SKIRRuntime *)me;
 	return rt->handleStreamInst(elem_size);
-    }
-
-    void *
-    __SKIRRT_array(void *me, void *begin, void *end, unsigned int elem_size, unsigned int stride)
-    {
-	SKIRRuntime *rt = (SKIRRuntime *)me;
-	return rt->handleArrayInst(begin, end, elem_size, stride);
     }
 
     void

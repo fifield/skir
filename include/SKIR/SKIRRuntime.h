@@ -45,8 +45,8 @@ public:
     void addSymbol(const char *name, vfp symbol);
 
     // instruction entry points
-    void *handleKernelInst(void *init, void *work, void *args);
-    void *handleKernelInst(Function *init, Function *work, void *args);
+    void *handleKernelInst(void *work, void *args);
+    void *handleKernelInst(Function *work, void *args);
     void handleCallInst(void *kernel, void *ins, void *outs);
     void handleWaitInst(void *kernel);
     void handleBecomeInst(void *kernel, void *ins, void *outs);
@@ -106,8 +106,6 @@ public:
     void setSG(SKIRRuntimeGraph *sg) { host_sg = sg; }
     void setSched(SKIRScheduler *sched) { host_sched = sched; }
     void setNumThreads(unsigned nthreads) { num_threads = nthreads; }
-
-    void runInitFunction(SKIRRuntimeKernel *k, void *args);
 
     SKIRRuntimeStream *newStream();
     SKIRRuntimeKernel *newKernel();

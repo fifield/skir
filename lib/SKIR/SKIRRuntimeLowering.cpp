@@ -59,12 +59,11 @@ public:
 	    static Constant *kernelFCache;
 	    Value *me = ConstantInt::get(intPtrType, (uintptr_t)rt);
 	    me = new IntToPtrInst(me, Type::getInt8PtrTy(CTX,0), "", &CI);
-	    Value *ops[4] = { me,                   /* SKIRRuntime* */
-			      CI.getOperand(1),     /* init() name */
-			      CI.getOperand(2),     /* work() name */
-			      CI.getOperand(3) };   /* arguments */
-	    /* void *__SKIRRT_kernel(void *, void *, void *) */
-	    ReplaceCallWith("__SKIRRT_kernel", &CI, ops, ops+4, 
+	    Value *ops[3] = { me,                   /* SKIRRuntime* */
+			      CI.getOperand(1),     /* work() name */
+			      CI.getOperand(2) };   /* arguments */
+	    /* void *__SKIRRT_kernel(void *, void *) */
+	    ReplaceCallWith("__SKIRRT_kernel", &CI, ops, ops+3, 
 			    PointerType::get(Type::getInt8Ty(CTX),0), kernelFCache);
 	    ret = true;
 	}
@@ -108,18 +107,6 @@ public:
 			      CI.getOperand(1) }; /* elem_size * */
 	    ReplaceCallWith("__SKIRRT_stream", &CI, ops, ops+2,
 			    PointerType::get(Type::getInt8Ty(CTX),0), streamFCache);
-	    ret = true;
-	}
-	else if (isa<SKIRArrayInst>(&CI)) {
-	    static Constant *arrayFCache;
-	    Value *me = ConstantInt::get(intPtrType, (uintptr_t)rt);
-	    Value *ops[5] = { me,                 /* SKIRRuntime* */
-			      CI.getOperand(1),   /* begin */
-			      CI.getOperand(2),   /* end */
-			      CI.getOperand(3),   /* element size */
-			      CI.getOperand(4) }; /* stride */
-	    ReplaceCallWith("__SKIRRT_array", &CI, ops, ops+5, 
-			    PointerType::get(Type::getInt8Ty(CTX),0), arrayFCache);
 	    ret = true;
 	}
     }

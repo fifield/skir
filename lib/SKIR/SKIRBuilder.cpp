@@ -17,13 +17,20 @@ SKIRBuilder::CreateStream(Module *mod) {
 
 Value *
 SKIRBuilder::CreateKernel(Module *mod, Value *init, Value *work, Value *params) {
+    if (params == NULL)
+	params = CreateIntToPtr(ConstantInt::get(Type::getInt64Ty(C), 0),GetVoidPtrType(C));
+    params = CreateCall(init, params);
+    return CreateKernel(mod, work, params);
+}
+
+Value *
+SKIRBuilder::CreateKernel(Module *mod, Value *work, Value *params) {
     Value *int_skir_kernel = Intrinsic::getDeclaration(mod, Intrinsic::skir_kernel);
-    Value *init_ptr = CreateBitCast(init, GetVoidPtrType(C));
     Value *work_ptr = CreateBitCast(work, GetVoidPtrType(C));
     LLVMContext &C = mod->getContext();
     if (params == NULL)
 	params = CreateIntToPtr(ConstantInt::get(Type::getInt64Ty(C), 0),GetVoidPtrType(C));
-    return CreateCall3(int_skir_kernel, init_ptr, work_ptr, params);
+    return CreateCall2(int_skir_kernel, work_ptr, params);
 }
 
 Value *

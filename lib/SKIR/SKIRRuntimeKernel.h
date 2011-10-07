@@ -16,7 +16,6 @@
 namespace llvm {
 
 typedef void* work_function(void*, void*, void *, void *);
-typedef void* init_function(void*);
 
 class SKIRScheduler;
 
@@ -40,13 +39,11 @@ struct SKIRRuntimeKernel
     // unique kernel identifier
     unsigned id;
 
-    // original llvm code for work and init
+    // original llvm code for work fn
     Function *base_work;
-    Function *base_init;
 
-    // possibly transformed llvm code for work and init
+    // possibly transformed llvm code for work fn
     Function *work;
-    Function *init;
 
     // programmer defined input and output streams (arguments to skir.call)
     SKIRRuntimeStream **rt_ins;
@@ -112,9 +109,6 @@ struct SKIRRuntimeKernel
 	id = i;
 
 	base_work = NULL;
-	base_init = NULL;
-
-	init = NULL;
 	work = NULL;
 
 	rt_ins = NULL;

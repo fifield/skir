@@ -22,7 +22,6 @@ public:
 	: IRBuilder<>(TheBB, IP), C(TheBB->getContext()) {}
 
     enum {
-	SKIR_INIT,
 	SKIR_WORK,
 	SKIR_INS,
 	SKIR_OUTS,
@@ -31,6 +30,7 @@ public:
 
     Value *CreateStream(Module *mod);
 
+    Value *CreateKernel(Module *mod, Value *work, Value *params);
     Value *CreateKernel(Module *mod, Value *init, Value *work, Value *params);
 
     Value *CreateKernelCall(Module *mod, Value *kernel, Value *ins, Value *outs);

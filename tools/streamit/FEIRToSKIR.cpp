@@ -580,8 +580,6 @@ void *FEIRToSKIR::visitFuncInit(Function *func) {
     string name = "__streamit_" + currentStreamSpec->getName() + "_init";
     int streamType = currentStreamSpec->getType();
 
-
-
     // create the init function
     Constant *c = getOrInsertFunction(name, GetInitFunctionType(CTX));
     lFunction *f = cast<lFunction>(c);

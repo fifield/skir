@@ -6,8 +6,7 @@
 #include "llvm/Module.h"
 #include "llvm/Support/InstVisitor.h"
 #include "llvm/Constants.h"
-//#include <SKIR/SKIRRuntime.h>
-//#include "SKIRUtil.h"
+
 using namespace llvm;
 
 namespace {
@@ -39,11 +38,10 @@ struct SKIRCtoIntrPass : public FunctionPass {
 		if (!F) continue;
 		//LLVMContext &CTX = F->getContext();
 		if (F->getName() == "__SKIR_kernel") {
-		    Value *ops[3] = { CI->getOperand(1),   /* init() name */
-				      CI->getOperand(2),   /* work() name */
-				      CI->getOperand(3) }; /* arguments */
+		    Value *ops[2] = { CI->getOperand(1),   /* work() name */
+				      CI->getOperand(2) }; /* arguments */
 		    Function *f = Intrinsic::getDeclaration(mod, Intrinsic::skir_kernel);
-		    ReplaceCallWith(f, CI, ops, ops+3);
+		    ReplaceCallWith(f, CI, ops, ops+2);
 		}
 		else if (F->getName() == "__SKIR_call") {
 		    Value *ops[3] = { CI->getOperand(1),   /* RuntimeKernel* */
@@ -61,14 +59,6 @@ struct SKIRCtoIntrPass : public FunctionPass {
 		    Value *ops[1] = { CI->getOperand(1) };
 		    Function *f = Intrinsic::getDeclaration(mod, Intrinsic::skir_stream);
 		    ReplaceCallWith(f, CI, ops, ops+1);
-		}
-		if (F->getName() == "__SKIR_array") {
-		    Value *ops[4] = { CI->getOperand(1),   /* begin */
-				      CI->getOperand(2),   /* end */
-				      CI->getOperand(3),   /* size */
-				      CI->getOperand(4) }; /* stride */
-		    Function *f = Intrinsic::getDeclaration(mod, Intrinsic::skir_array);
-		    ReplaceCallWith(f, CI, ops, ops+4);
 		}
 		else if (F->getName() == "__SKIR_push") {
 		    Value *ops[2] = { CI->getOperand(1),   /* stream */

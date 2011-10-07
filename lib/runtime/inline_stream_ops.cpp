@@ -45,16 +45,6 @@ __SKIRRT_workfn_skel(skir_rt_state_t   *rt_state,
 }
 
 //
-// a noop kernel init function
-//
-
-void *
-__SKIRRT_null_init(void *a) 
-{
-    return a;
-}
-
-//
 // fusion support
 //
 
@@ -1144,7 +1134,7 @@ __SKIRRT_inline_array_pop_nocheck(skir_stream_t *p[], skir_stream_idx_t idx,
 //
 // socket streams
 //
-#if 1
+#if 0
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -1326,89 +1316,3 @@ __SKIRRT_socket_sink_work(void *kernel_state,
 
 // end of socket streams
 #endif
-
-//
-// old stuff
-//
-
-#if 0
-
-void
-__SKIRRT_inline_array_push(skir_stream_t *p[], skir_stream_idx_t idx, skir_stream_element_t e)
-{
-    skir_array_stream_t *s = (skir_array_stream_t *)p[idx];
-    if (s->head < s->tail) {
-	memcpy((void*)s->head, e, s->elem_size);
-	s->head += s->stride;
-	RECORD_PUSH(s->num_push);
-    }
-    else {
-	// array full
-	__SKIRRT_would_block((void *)1);
-    }
-}
-
-void
-__SKIRRT_inline_array_pop(skir_stream_t *p[], skir_stream_idx_t idx, skir_stream_element_t e)
-{
-    skir_array_stream_t *s = (skir_array_stream_t *)p[idx];
-    if (s->tail < s->head) {
-	memcpy(e, (void*)s->tail, s->elem_size);
-	s->tail += s->stride;
-    }
-    else {
-	// array empty
-	__SKIRRT_would_block((void *)1);
-    }
-}
-#endif
-#if 0
-void
-__SKIRRT_inline_array_peek(skir_stream_t *p, skir_stream_element_t *e, uint32_t offset)
-{
-    //skir_array_stream_t *s = (skir_array_stream_t *)p;
-    //assert(0);
-}
-#endif
-#if 0
-void
-__SKIRRT_inline_complete_niters(int niter, 
-				skir_stream_t *ins[], int nins,
-				skir_stream_t *outs[], int nouts)
-{
-
-    int i,j;
-    for (j=0; j<nouts; j++) {
-	skir_stream_t *s = outs[j];
-	size_t npush = niter * s->push_rate;
-	s->head = (s->head + (npush*4)) % STREAM_BUFFER_SIZE;
-	//__SKIRRT_inline_push_nocheck_nocopy(s, num);
-    }
-    for (i=0; i<nins; i++) {
-	skir_stream_t *s = ins[i];
-	size_t npop = niter * s->pop_rate;
-	s->tail = (s->tail + (npop*4)) % STREAM_BUFFER_SIZE;
-	//__SKIRRT_inline_pop_nocheck_nocopy(s, num);
-    }
-}
-#endif
-#if 0
-
-static void
-__SKIRRT_inline_push_nocheck_nocopy(skir_stream_t *s, size_t num)
-{
-    size_t next = (s->head + (num*4)) % STREAM_BUFFER_SIZE;
-    //assert (next != s->tail);
-    s->head = next;
-    RECORD_PUSH(s->num_push);
-}
-static void
-__SKIRRT_inline_pop_nocheck_nocopy(skir_stream_t *s, size_t num)
-{
-    //assert (s->head != s->tail);
-    s->tail = (s->tail + (num*4)) % STREAM_BUFFER_SIZE;
-}
-
-
-#endif
-

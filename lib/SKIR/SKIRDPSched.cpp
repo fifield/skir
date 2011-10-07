@@ -32,7 +32,7 @@ SKIRDPSched::runCodeGen(SKIRRuntimeKernel *rtk)
 void
 SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 {
-    Function *work, *init;
+    Function *work;
     dp_splitter_work_t *state;
 
     if (rtk != my_kernel) {
@@ -78,7 +78,6 @@ SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 	// create split
 	// 
 	work = cast<Function>( getInlineCode(rtk->work->getParent(), "__SKIRRT_dp_split_work") );
-	init = cast<Function>( getInlineCode(rtk->work->getParent(), "__SKIRRT_null_init") );
 	state = new dp_splitter_work_t;
 	state->next_stream = 0;
 	state->num_streams = width;
@@ -93,7 +92,7 @@ SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 	}
 
 	// call the kernel instruction
-	my_split = (SKIRRuntimeKernel*)sg->getRuntime().handleKernelInst(init, work, state);
+	my_split = (SKIRRuntimeKernel*)sg->getRuntime().handleKernelInst(work, state);
 	my_split->opt_only = true;
 	my_split->is_fixed_rate = true;
 	my_split->has_push = my_split->has_pop = true;
@@ -120,7 +119,6 @@ SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 	// create join
 	//
 	work = cast<Function>( getInlineCode(rtk->work->getParent(), "__SKIRRT_dp_join_work") );
-	init = cast<Function>( getInlineCode(rtk->work->getParent(), "__SKIRRT_null_init") );
 	state = new dp_splitter_work_t;
 	state->next_stream = width; //look at __SKIRRT_dpq_join_work before changing this
 	state->rate = new int[width];
@@ -134,7 +132,7 @@ SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 	state->next_stream = 0;
 
 	// call the kernel instruction
-	my_join = (SKIRRuntimeKernel*)sg->getRuntime().handleKernelInst(init, work, state);
+	my_join = (SKIRRuntimeKernel*)sg->getRuntime().handleKernelInst(work, state);
 	my_join->opt_only = true;
 	my_join->is_fixed_rate = true;
 	my_join->has_push = my_join->has_pop = true;
@@ -165,7 +163,7 @@ SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 
 	    // create with kernel inst
 	    SKIRRuntimeKernel *k = (SKIRRuntimeKernel*)
-		sg->getRuntime().handleKernelInst(init, rtk->base_work, rtk->state);
+		sg->getRuntime().handleKernelInst(rtk->base_work, rtk->state);
 
 	    extern bool EnableOpenCLSched;
 	    if (strm == 0 && EnableOpenCLSched) {
