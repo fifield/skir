@@ -43,10 +43,6 @@ public:
 	assert(sizeof(T) <= sizeof(StreamElement) && "try using pointers instead");
     }
 
-    Stream(void *begin, void *end) : StreamBase(begin, end, sizeof(T)) {
-	assert(sizeof(T) <= sizeof(StreamElement) && "try using pointers instead");
-    }
-
     Stream(StreamPtr *p, int i) : StreamBase(p,i) {
 	assert(sizeof(T) <= sizeof(StreamElement) && "try using pointers instead");
     }
