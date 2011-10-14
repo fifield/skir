@@ -358,8 +358,8 @@ static int simple_1_0_work (void *state, skir_stream_ptr_t ins[], skir_stream_pt
 // int printer
 // 
 struct int_printer_t {
-    int_printer_t(char *p) : prefix(p) {}
-    char *prefix;
+    int_printer_t(const char *p) : prefix(p) {}
+    const char *prefix;
 };
 
 static int int_printer_work (void *state, skir_stream_ptr_t ins[], skir_stream_ptr_t outs[])
@@ -377,8 +377,8 @@ static int int_printer_work (void *state, skir_stream_ptr_t ins[], skir_stream_p
 // float printer
 // 
 struct float_printer_t {
-    float_printer_t(char *p) : prefix(p) {}
-    char *prefix;
+    float_printer_t(const char *p) : prefix(p) {}
+    const char *prefix;
 };
 
 static int float_printer_work (void *state, skir_stream_ptr_t ins[], skir_stream_ptr_t outs[])
