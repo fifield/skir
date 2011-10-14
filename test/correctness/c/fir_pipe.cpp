@@ -28,7 +28,7 @@ balanced_fir_test(int nfir, int ntaps, int nsamples)
     skir_stream_ptr_t outs[2] = {0, 0};
 
     //src = graph->add_kernel(simple_0_1_work, &int0);
-    src = __SKIR_kernel((void*)noop_init, (void*)simple_0_1_work, &int0);
+    src = __SKIR_kernel((void*)simple_0_1_work, &int0);
 
     //graph->add_stream(src, fir[0]);
     outs[0] = __SKIR_stream(sizeof(int));
@@ -37,8 +37,7 @@ balanced_fir_test(int nfir, int ntaps, int nsamples)
 
     int nkern = 0;
     for (int i=0; i<nfir; nkern++, i++) {
-	fir[nkern] = __SKIR_kernel((void*)noop_init,
-				   (void*)fir1024_1_1_work,
+	fir[nkern] = __SKIR_kernel((void*)fir1024_1_1_work,
 				   new fir_state_t(ntaps));
 	outs[0] = __SKIR_stream(sizeof(int));
 	__SKIR_call(fir[nkern], ins, outs);
@@ -46,11 +45,11 @@ balanced_fir_test(int nfir, int ntaps, int nsamples)
     }    
 
 #ifdef CORRECTNESS
-    sink = __SKIR_kernel((void*)noop_init, (void*)int_printer_work, new int_printer_t(""));
+    sink = __SKIR_kernel((void*)int_printer_work, new int_printer_t(""));
 #else
     simple_1_0_t t;
     t.div = 100000;
-    sink = __SKIR_kernel((void*)noop_init, (void*)simple_1_0_work, &t);
+    sink = __SKIR_kernel((void*)simple_1_0_work, &t);
 #endif
     outs[0] = 0;//__SKIR_stream(sizeof(int));
     __SKIR_call(sink, ins, outs);
