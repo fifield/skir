@@ -1733,6 +1733,9 @@ ac_config_commands="$ac_config_commands lib/runtime/Makefile"
 ac_config_commands="$ac_config_commands lib/CtoIntr/Makefile"
 
 
+ac_config_commands="$ac_config_commands lib/ExtractStatic/Makefile"
+
+
 ac_config_commands="$ac_config_commands test/Makefile"
 
 
@@ -2489,6 +2492,7 @@ do
     "lib/SKIR/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/SKIR/Makefile" ;;
     "lib/runtime/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/runtime/Makefile" ;;
     "lib/CtoIntr/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/CtoIntr/Makefile" ;;
+    "lib/ExtractStatic/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS lib/ExtractStatic/Makefile" ;;
     "test/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS test/Makefile" ;;
     "test/Makefile.SKIR") CONFIG_COMMANDS="$CONFIG_COMMANDS test/Makefile.SKIR" ;;
     "test/correctness/Makefile") CONFIG_COMMANDS="$CONFIG_COMMANDS test/correctness/Makefile" ;;
@@ -2924,6 +2928,8 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/lib/runtime/Makefile lib/runtime/Makefile ;;
     "lib/CtoIntr/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname lib/CtoIntr/Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/lib/CtoIntr/Makefile lib/CtoIntr/Makefile ;;
+    "lib/ExtractStatic/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname lib/ExtractStatic/Makefile`
+   ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/lib/ExtractStatic/Makefile lib/ExtractStatic/Makefile ;;
     "test/Makefile":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/Makefile`
    ${SHELL} ${llvm_src}/autoconf/install-sh -m 0644 -c ${srcdir}/test/Makefile test/Makefile ;;
     "test/Makefile.SKIR":C) ${llvm_src}/autoconf/mkinstalldirs `dirname test/Makefile.SKIR`
