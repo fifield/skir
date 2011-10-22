@@ -247,7 +247,7 @@ SKIRKernelInfo::runOnFunction(Function &work)
 	}
 	else if (isa<StoreInst>(inst)) {
 	    std::set<Value*> visited;
-	    unsigned result = checkStoreAddress(visited, inst->getOperand(1));
+	    unsigned result = checkStoreAddress(visited, inst->getOperand(1)->stripPointerCasts());
 	    is_stateful = (result != 0x10);
 	}
     }
