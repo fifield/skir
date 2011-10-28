@@ -281,7 +281,7 @@ SKIRRuntime::handleUncallInst(void *k)
     }
 
     rtk->sched->removeKernel(rtk);
-    getSG()->removeKernel(old_rtk);
+    getSG()->removeKernel(rtk);
 
     delete[] rtk->impl_ins;
     delete[] rtk->impl_outs;
