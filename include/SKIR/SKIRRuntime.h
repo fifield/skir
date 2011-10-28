@@ -48,6 +48,7 @@ public:
     void *handleKernelInst(void *work, void *args);
     void *handleKernelInst(Function *work, void *args);
     void handleCallInst(void *kernel, void *ins, void *outs);
+    void handleUncallInst(void *kernel);
     void handleWaitInst(void *kernel);
     void handleBecomeInst(void *kernel, void *ins, void *outs);
     void *handleStreamInst(unsigned elem_size);

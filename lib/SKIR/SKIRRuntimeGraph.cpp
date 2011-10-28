@@ -94,7 +94,7 @@ FakeMergeThresh("merge-thresh",
 SKIRRuntimeGraph::SKIRRuntimeGraph(SKIRRuntime &runtime)
     : rt(runtime), verbose(false)
 {
-    adj.reserve(1024);
+    adj.reserve(10240);
 
     the_tbb_sched = new SKIRTbbSched(this, rt.getNumThreads());
 

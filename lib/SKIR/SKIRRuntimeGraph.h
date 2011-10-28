@@ -45,6 +45,8 @@ public:
     SKIRRuntimeKernel* fuseKernels(SKIRRuntimeKernel *kernel0, SKIRRuntimeKernel *kernel1);
     void fissKernel(std::vector<SKIRRuntimeKernel*> &outK, SKIRRuntimeKernel *K, int width);
 
+    void removeKernel(SKIRRuntimeKernel *k);
+
     void log();
     void dot(std::ostream &output_stream);
     void topo_sort(std::list<SKIRRuntimeKernel *> &output);
@@ -56,7 +58,6 @@ private:
     void topo_sort_visit(int k, bool *c, std::list<SKIRRuntimeKernel *>& sorted);
 
     void addKernel(SKIRRuntimeKernel *k);
-    void removeKernel(SKIRRuntimeKernel *k);
     void addEdge(SKIRRuntimeKernel *src, SKIRRuntimeKernel *dst);
     void refreshAdjList(void);
     

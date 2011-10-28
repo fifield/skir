@@ -13,6 +13,7 @@ SKIR_LLI      = $(ToolDir)/skir-lli -n ${NTHREADS}
 SKIR_STREAMIT = $(ToolDir)/streamit
 SKIR_INC      = $(LibDir)
 SKIR_OPT      = $(ToolDir)/skir-opt
+SKIR_LIB      = $(LibDir)
 
 ifndef SKIR_OPT_LVL
   SKIR_OPT_LVL=0
@@ -46,7 +47,7 @@ endif
 	llvm-dis < $< > $@
 
 %-skir.bc: %.bc
-	opt -load=$(LibDir)/CtoIntr.so -skir-c-to-intr < $< > $@
+	opt -load=$(SKIR_LIB)/CtoIntr.so -skir-c-to-intr < $< > $@
 
 %-opt.bc: %-skir.bc
 	opt ${OPT_FLAGS} < $< > $@

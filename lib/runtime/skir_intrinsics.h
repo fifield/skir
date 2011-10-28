@@ -30,6 +30,7 @@ extern void __SKIR_yield(void *from, void *to);
 extern void __SKIR_return(void *from, int r);
 
 extern void __SKIR_become(skir_kernel_ptr_t k);
+extern void __SKIR_uncall(skir_kernel_ptr_t k);
 
 #ifdef __cplusplus 
 }

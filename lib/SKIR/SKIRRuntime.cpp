@@ -264,6 +264,42 @@ SKIRRuntime::handleCallInst(void *k, void *is, void *os)
 }
 
 void
+SKIRRuntime::handleUncallInst(void *k)
+{
+    SKIRRuntimeKernel *rtk = (SKIRRuntimeKernel *)k;
+
+    // disconnect the kernel
+    for (skir_stream_t **sptr = (skir_stream_t **)rtk->impl_ins; sptr && *sptr; sptr++) {
+        skir_stream_t *si = *sptr;
+        assert(rtk == (SKIRRuntimeKernel*)si->dst);
+        si->dst = (void*)-1;
+    }
+    for (skir_stream_t **sptr = (skir_stream_t **)rtk->impl_outs; sptr && *sptr; sptr++) {
+        skir_stream_t *si = *sptr;
+        assert(rtk == (SKIRRuntimeKernel*)si->src);
+        si->src = (void*)-1;
+    }
+
+    rtk->sched->removeKernel(rtk);
+    getSG()->removeKernel(old_rtk);
+
+    delete[] rtk->impl_ins;
+    delete[] rtk->impl_outs;
+    rtk->impl_ins = 0;
+    rtk->impl_outs = 0;
+
+    delete[] rtk->rt_ins;
+    delete[] rtk->rt_outs;
+    rtk->rt_ins = 0;
+    rtk->rt_outs = 0;
+
+    if (verbose) {
+	errs() << "handleUncall: ";
+	errs() << rtk->work->getNameStr() << "\n";
+    }
+}
+
+void
 SKIRRuntime::handleBecomeInst(void *k, void *is, void *os)
 {
     SKIRRuntimeKernel *new_rtk = (SKIRRuntimeKernel *)k;
@@ -295,10 +331,17 @@ SKIRRuntime::handleBecomeInst(void *k, void *is, void *os)
     }
 
     old_rtk->sched->removeKernel(old_rtk);
+    getSG()->removeKernel(old_rtk);
+
     delete[] old_rtk->impl_ins;
     delete[] old_rtk->impl_outs;
     old_rtk->impl_ins = 0;
     old_rtk->impl_outs = 0;
+
+    delete[] old_rtk->rt_ins;
+    delete[] old_rtk->rt_outs;
+    old_rtk->rt_ins = 0;
+    old_rtk->rt_outs = 0;
 
     // setup new kernel
     new_rtk->nins = old_rtk->nins;
