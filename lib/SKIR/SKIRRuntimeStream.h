@@ -131,7 +131,7 @@ new_skir_stream_t(SKIRRuntimeStream *rs)
 	file_name << "/skir_stream." << rs->id;
 	fd = shm_open( file_name.str().c_str(), O_CREAT | O_RDWR, S_IREAD | S_IWRITE);
 	assert(fd >= 0);
-	ftruncate(fd, alloc_size);
+	assert( ftruncate(fd, alloc_size) == 0 );
 
 	s = (skir_stream_t*)mmap(0, alloc_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	assert(s != MAP_FAILED);
