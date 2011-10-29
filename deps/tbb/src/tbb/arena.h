@@ -386,6 +386,10 @@ private:
 
     //! If necessary, raise a flag that there is new job in arena.
     template<bool Spawned> void advertise_new_work();
+
+    //! SKIR
+    inline int force_adjust_demand(int delta);
+
 #else /* !__TBB_ARENA_PER_MASTER */
     //! Server is going away and hence further calls to adjust_job_count_estimate are unsafe.
     static const pool_state_t SNAPSHOT_SERVER_GOING_AWAY = pool_state_t(-2);
@@ -509,6 +513,14 @@ template<bool Spawned> void arena::advertise_new_work() {
         }
     }
 }
+
+inline int arena::force_adjust_demand( int d ) {
+    my_market->adjust_demand( *this, -12345 );
+    my_max_num_workers = d-1;
+    my_market->adjust_demand( *this, my_max_num_workers );
+    return my_max_num_workers;
+}
+
 #else /* !__TBB_ARENA_PER_MASTER */
 inline void arena::mark_pool_full()  {
     // Double-check idiom that is deliberately sloppy about memory fences.

@@ -37,14 +37,18 @@ public:
 
     void run(void);
 
+    int loadCallback(float load);
+
 private:
     SKIRRuntimeGraph *sg;
 
+    int cur_workers;
     int num_workers;
     bool verbose;
 
     tbb::task *root_task;
     tbb::tbb_thread *main_thread;
+    tbb::tbb_thread *mon_thread;
 
     tbb::atomic<int> running;
 

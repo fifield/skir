@@ -40,6 +40,13 @@ static cl::opt<int>
 TbbRetries("tbb-retries",
 	   cl::desc("tbb retries"), cl::init(-1));
 
+
+static cl::opt<bool>
+TbbMonitor("tbb-monitor",
+	   cl::desc("tbb monitor"), cl::init(false));
+
+
+#if 0
 // < thread affinity, tbb affinity >
 typedef tbb::enumerable_thread_specific< std::pair<int,int> > AffinityPair;
 static AffinityPair affinity_pair(std::make_pair(-1,-1));
@@ -74,6 +81,7 @@ public:
 };
 
 static MyObserver observer;
+#endif
 
 //
 // kernel_map & helpers
@@ -136,14 +144,16 @@ public:
 	recycle_as_safe_continuation();
     }
 
+#if 0
     void note_affinity(affinity_id id) {
 	AffinityPair::reference pair = affinity_pair.local();
 	if (pair.second == -1) {
 	    pair.second = id;
-	    //SKIRTbbSched *s = (SKIRTbbSched *)k->rt_kernel.sched;
-	    //s->setAffinities();
+	    SKIRTbbSched *s = (SKIRTbbSched *)k->rt_kernel.sched;
+	    s->setAffinities();
 	} else assert(pair.second == id);
     }
+#endif
 
     // 
     // try to perform dynamic kernel fusion
@@ -303,11 +313,12 @@ public:
 		    b = k->work();
 		}
 
+#if 0
 		AffinityPair::reference pair = affinity_pair.local();
-		if (pair.second != -1) 
-		    k->rt_kernel.total_runtime_per_thread[pair.second] += 
+		if (pair.second != -1)
+		    k->rt_kernel.total_runtime_per_thread[pair.second] +=
 			k->rt_kernel.rt_state->cycles;
-
+#endif
 		// if blocked on finished kernel
 		if (b == (SKIRRuntimeKernel *)1) {
 		    k->done();
@@ -363,8 +374,6 @@ SKIRTbbSched::SKIRTbbSched(SKIRRuntimeGraph *stream_graph, int nthreads) : sg(st
 									   main_thread(NULL)
 {
     running = 0;
-    root_task = new(tbb::task::allocate_root()) tbb::empty_task;
-    root_task->increment_ref_count();
     if (TbbRetries == -1) {
 	if (num_workers > 1) {
 	    TbbRetries = 0;
@@ -391,6 +400,7 @@ SKIRTbbSched::waitKernel(SKIRRuntimeKernel *rt_kernel)
 void
 SKIRTbbSched::setAffinities()
 {
+#if 0
     std::list<SKIRRuntimeKernel *> l;
     sg->topo_sort(l);
     
@@ -412,6 +422,7 @@ SKIRTbbSched::setAffinities()
 	if (verbose) errs() << (*I)->work->getName() << "  " << i << "  " << aff << "\n";
     }
     if (verbose) errs() << "----- end affinities ---------\n";
+#endif
 }
 
 void
@@ -458,10 +469,95 @@ SKIRTbbSched::unPauseKernel(SKIRRuntimeKernel *rt_kernel)
     k->unpause();
 }
 
+int
+SKIRTbbSched::loadCallback(float load)
+{
+    static bool last_was_dec = false;
+    static bool last_was_inc = false;
+    static float last_load = 0.0;
+    int backoff = 0;
+
+    if (!root_task)
+        return false;
+
+    load /= cur_workers;
+    //printf("%f %d %f\n", load, cur_workers, load);
+
+    float delta = last_load - load;
+
+    if ((load > 0.99) && (cur_workers < num_workers)) {
+        cur_workers++;
+        int ret = root_task->adjust_demand(cur_workers);
+        //printf("++ %d\n", ret);
+        // if we're reversing the last thing, and making things better, back off
+        // if we're doing the same thing as before, go faster
+        if (last_was_dec)
+            if (delta > 0) backoff = 1;
+        else
+            backoff = -1;
+        last_was_dec = false;
+        last_was_inc = true;
+        last_load = load;
+    }
+    else if ((load < 0.75) && cur_workers > 1) {
+        cur_workers--;
+        int ret = root_task->adjust_demand(cur_workers);
+        //printf("--> %d\n", ret);
+        // if we're reversing the last thing, and making things better, back off
+        // if we're doing the same thing as before, go faster
+        if (last_was_inc && delta > 0)
+            backoff = 1;
+        else
+            backoff = -1;
+
+        last_was_dec = true;
+        last_was_inc = false;
+        last_load = load;
+    }
+    else last_was_inc = last_was_dec = false;
+
+    return backoff;
+}
+
 struct skir_tbb_thread {
     SKIRTbbSched &s;
     skir_tbb_thread(SKIRTbbSched &sched) : s(sched) {}
     void operator()() { s.run(); }
+};
+
+struct skir_tbb_mon_thread {
+    SKIRTbbSched &s;
+    unsigned delay;
+    skir_tbb_mon_thread(SKIRTbbSched &sched) : s(sched), delay(100000) {}
+    void operator()() {
+        while (1) {
+            usleep(delay);
+
+            char cmd[1024];
+
+            pid_t p = getpid();
+            if (p >= 10000)
+                snprintf(cmd,1024,"top -n 1 -p %d | tail -n 2 | head -n 1 | awk '{ print $9 }'",p);
+            else
+                snprintf(cmd,1024,"top -n 1 -p %d | tail -n 2 | head -n 1 | awk '{ print $10 }'",p);
+
+            FILE *f = popen(cmd, "r");
+            fread(cmd, 1, 1024, f);
+            pclose(f);
+
+            int cpu;
+            sscanf(cmd, "%d", &cpu);
+
+            float load = (float)cpu / 100.0;
+            int backoff = s.loadCallback(load);
+            if (backoff > 0)
+                delay = 5000000;
+            else if (backoff < 0)
+                delay = 100000;
+            else
+                delay = 500000;
+        }
+    }
 };
 
 void
@@ -469,6 +565,11 @@ SKIRTbbSched::start(void)
 {
     if (running.compare_and_swap(1,0) == 0) {
 	main_thread = new tbb::tbb_thread(*(new skir_tbb_thread(*this)));
+	if (TbbMonitor) {
+            if (verbose)
+                errs() << "TBB: monitoring is on\n";
+            mon_thread = new tbb::tbb_thread(*(new skir_tbb_mon_thread(*this)));
+        }
 	assert(main_thread);
     }
 }
@@ -488,7 +589,10 @@ SKIRTbbSched::stop(void)
 void 
 SKIRTbbSched::run()
 {
+    cur_workers = num_workers;
     tbb::task_scheduler_init tbb_init(num_workers);
+    root_task = new(tbb::task::allocate_root()) tbb::empty_task;
+    root_task->increment_ref_count();
 
     while (running == 1) {
 	kernel_t *k = 0;
@@ -507,7 +611,7 @@ SKIRTbbSched::run()
 			if (k->running == 0) {
 			    k->running++;
 			    t = new (root_task->allocate_child()) kernel_task(k);
-			    assert(k->rt_kernel.affinity >= 0);
+			    //assert(k->rt_kernel.affinity >= 0);
 			    //t->set_affinity(k->rt_kernel.affinity);
 			}
 		    }

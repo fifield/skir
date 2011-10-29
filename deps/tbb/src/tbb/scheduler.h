@@ -330,6 +330,9 @@ public:
     task* find_and_steal_task( task& target );
     task* local_find_and_steal_task( task& target );
 
+    int adjust_demand( int d );
+    int local_adjust_demand( int d );
+
 #if __TBB_ARENA_PER_MASTER
     /*override*/ 
     void enqueue( task& task_, void* reserved );
@@ -553,6 +556,11 @@ inline void tbb::internal::generic_scheduler::spawn_root_and_wait( task& first, 
 inline tbb::task* tbb::internal::generic_scheduler::find_and_steal_task( task &target )
 {
     return governor::local_scheduler()->local_find_and_steal_task( target );
+}
+
+inline int tbb::internal::generic_scheduler::adjust_demand( int d )
+{
+    return governor::local_scheduler()->local_adjust_demand( d );
 }
 
 #if __TBB_ARENA_PER_MASTER

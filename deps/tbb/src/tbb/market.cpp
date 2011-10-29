@@ -175,11 +175,19 @@ void market::update_allotment ( int max_workers ) {
 /** The balancing algorithm may be liable to data races. However the aberrations 
     caused by the races are not fatal and generally only temporarily affect fairness 
     of the workers distribution among arenas. **/
-void market::adjust_demand ( arena& a, int delta ) {
+static arena *aa = 0;
+
+void market::adjust_demand ( arena& ab, int delta ) {
+    if (!aa) aa = &ab;
+    arena &a = *aa;
+    if (delta == -12345)
+        delta = 0 - a.my_num_workers_requested;
     __TBB_ASSERT( theMarket, "market instance was destroyed prematurely?" );
+    //runtime_warning("** %p %d %d %d %d --> ", &a, (int)a.my_num_workers_requested, (int)my_total_demand, (int)a.my_num_workers_allotted, delta);
     a.my_num_workers_requested += delta;
     my_total_demand += delta;
     update_allotment( my_max_num_workers );
+    //runtime_warning("%d %d %d", (int)a.my_num_workers_requested, (int)my_total_demand, (int)a.my_num_workers_allotted);
     // Must be called outside of any locks
     my_server->adjust_job_count_estimate( delta );
     GATHER_STATISTIC( governor::local_scheduler_if_initialized() ? ++governor::local_scheduler_if_initialized()->my_counters.gate_switches : 0 );

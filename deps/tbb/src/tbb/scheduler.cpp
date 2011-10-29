@@ -908,6 +908,10 @@ task* generic_scheduler::local_find_and_steal_task( task &target ) {
     return 0;
 }
 
+int generic_scheduler::local_adjust_demand( int d ) {
+    return my_arena->force_adjust_demand(d);
+}
+
 task* generic_scheduler::steal_task( arena_slot& victim_slot ) {
     task** victim_pool = lock_task_pool( &victim_slot );
     if ( !victim_pool )

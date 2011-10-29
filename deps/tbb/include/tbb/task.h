@@ -120,6 +120,7 @@ namespace internal {
 
 	//! For SKIR
 	virtual task* find_and_steal_task( task& t ) = 0;
+	virtual int adjust_demand( int delta ) = 0;
 	
 #if __TBB_ARENA_PER_MASTER
 
@@ -641,6 +642,10 @@ public:
 
     task* find_and_steal_task( task& t ) {
 	return prefix().owner->find_and_steal_task(t);
+    }
+
+    int adjust_demand( int delta ) {
+	return prefix().owner->adjust_demand(delta);
     }
 
 #if __TBB_ARENA_PER_MASTER
