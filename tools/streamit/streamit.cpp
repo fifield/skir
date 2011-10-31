@@ -819,6 +819,7 @@ static int __dummy_sink = 0;
 static unsigned long long __dummy_cnt = 0;
 static unsigned long long __dummy_total = 0;
 static unsigned long long __dummy_niters = 0;
+static unsigned long long __dummy_div = 0;
 static double __dummy_t;
 static double __dummy_rate_sum = 0.0;
 
@@ -847,26 +848,21 @@ __streamit_DummySinkInt_work(void *s, skir_stream_t* ins[], skir_stream_t* outs[
     __dummy_cnt++;
     __dummy_total++;
 
-#define DIV 1000000
-    static unsigned long long div = DIV;
-    if (__dummy_cnt == div) {
+    if (__dummy_cnt == __dummy_div) {
 	if (__dummy_niters) {
 	    double time = mysecond();
 	    double elap = time - __dummy_t;
-	    if (elap < 0.5) {
-		div*=2;
-	    }
-	    double rate = __dummy_total / elap;
+	    double rate = __dummy_cnt / elap;
+            __dummy_div /= elap;
 	    printf("%d, %e, %f\n", __dummy_total, rate, elap);
 	} else {
 	    printf("nsamples, rate, time\n");
-	    __dummy_t = mysecond();
 	    __dummy_total = 0;
 	}
 	__dummy_niters++;
 	__dummy_cnt = 0;
+        __dummy_t = mysecond();
     }
-#undef DIV
     return 0;
 }
 
@@ -887,26 +883,21 @@ __streamit_DummySinkFloat_work(void *s, skir_stream_t* ins[], skir_stream_t* out
     __dummy_cnt++;
     __dummy_total++;
 
-#define DIV 1000000
-    static unsigned long long div = DIV;
-    if (__dummy_cnt == div) {
+    if (__dummy_cnt == __dummy_div) {
 	if (__dummy_niters) {
 	    double time = mysecond();
 	    double elap = time - __dummy_t;
-	    if (elap < 0.5) {
-		div*=2;
-	    }
-	    double rate = __dummy_total / elap;
+	    double rate = __dummy_cnt / elap;
+            __dummy_div /= elap;
 	    printf("%d, %e, %f\n", __dummy_total, rate, elap);
 	} else {
 	    printf("nsamples, rate, time\n");
-	    __dummy_t = mysecond();
 	    __dummy_total = 0;
 	}
 	__dummy_niters++;
 	__dummy_cnt = 0;
+        __dummy_t = mysecond();
     }
-#undef DIV
     return 0;
 }
 
