@@ -819,7 +819,7 @@ static int __dummy_sink = 0;
 static unsigned long long __dummy_cnt = 0;
 static unsigned long long __dummy_total = 0;
 static unsigned long long __dummy_niters = 0;
-static unsigned long long __dummy_div = 0;
+static unsigned long long __dummy_div = 1000000;
 static double __dummy_t;
 static double __dummy_rate_sum = 0.0;
 
