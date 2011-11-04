@@ -157,31 +157,33 @@ public:
 
     static SKIRRuntimeKernel* d4r_cb(void *v, SKIRRuntimeKernel *me, SKIRRuntimeKernel *r)
     {
-        SKIRRuntimeGraph *sg = (SKIRRuntimeGraph *)v;
+//#define DEBUG(fmt, ...) fprintf(stderr, fmt, ## __VA_ARGS__)
+#define DEBUG(fmt, ...)
+
+        //SKIRRuntimeGraph *sg = (SKIRRuntimeGraph *)v;
 
         SKIRRuntimeStream *s = 0;
         int qsize = 0;
         // locate blocking kernel
         for (int j=0; j<me->nins && !s; j++) {
-            if (me->rt_ins[j]->si->src == r) {
+            if (me->rt_ins && me->rt_ins[j]->si->src == r) {
                 // blocked on read
                 s = me->rt_ins[j];
                 qsize = -1;
             }
         }
         for (int j=0; j<me->nouts && !s; j++) {
-            if (me->rt_outs[j]->si->dst == r) {
+            if (me->rt_outs && me->rt_outs[j]->si->dst == r) {
                 // blocked on write
                 s = me->rt_outs[j];
                 qsize = me->rt_ins[j]->qsize;
             }
         }
-        assert(s && "could not locate blocking kernel!");
+        if (!s) return me;
 
-        if (r == me->last_blocker) {
+        if ((r == me->last_blocker) && (me->total_niter == me->last_niter)) {
             // Transmit
-            bool detect = false;
-
+            DEBUG("Transfer: %llu %p\n", me->total_niter, r);
             if (qsize > 0 && s->writetagchanged)
                 s->writetagchanged = false;
             else if (s->readtagchanged)
@@ -195,17 +197,43 @@ public:
                     uint128_t priority = std::min(me->privateTag.Priority(), r->publicTag.Priority());
                     me->publicTag = r->publicTag;
                     me->publicTag.Priority(priority);
+                    DEBUG("Transfer: publicTag < t\n\tPrivate: (%llu, %llu, %d, %llu)\n" \
+                          "\tPublic: (%llu, %llu, %d, %llu)\n\t     t: (%llu, %llu, %d, %llu)\n",
+                          me->privateTag.Count(), me->privateTag.Key(),
+                          (int)me->privateTag.QueueSize(), me->privateTag.QueueKey(),
+                          me->publicTag.Count(), me->publicTag.Key(),
+                          (int)me->publicTag.QueueSize(), me->publicTag.QueueKey(),
+                          r->publicTag.Count(), r->publicTag.Key(),
+                          (int)r->publicTag.QueueSize(), r->publicTag.QueueKey());
                 }
                 else if (me->publicTag == r->publicTag) {
-                    assert(0 && 'detected');
+                    DEBUG("Transfer: publicTag == t\n\tPrivate: (%llu, %llu, %d, %llu)\n" \
+                          "\tPublic: (%llu, %llu, %d, %llu)\n\t     t: (%llu, %llu, %d, %llu)\n",
+                          me->privateTag.Count(), me->privateTag.Key(), 
+                          (int)me->privateTag.QueueSize(), me->privateTag.QueueKey(),
+                          me->publicTag.Count(), me->publicTag.Key(),
+                          (int)me->publicTag.QueueSize(), me->publicTag.QueueKey(),
+                          r->publicTag.Count(), r->publicTag.Key(),
+                          (int)r->publicTag.QueueSize(), r->publicTag.QueueKey());
+                    if (me->publicTag.Priority() == me->privateTag.Priority()) {
+                        if (qsize == -1) assert(0 && "True deadlock detected");
+                        else assert(0 && "Artificial deadlock detected");
+                    }
+                } else {
+                    DEBUG("Transfer: publicTag > t NOP\n\tPrivate: (%llu, %llu, %d, %llu)\n" \
+                          "\tPublic: (%llu, %llu, %d, %llu)\n\t     t: (%llu, %llu, %d, %llu)\n",
+                          me->privateTag.Count(), me->privateTag.Key(),
+                          (int)me->privateTag.QueueSize(), me->privateTag.QueueKey(),
+                          me->publicTag.Count(), me->publicTag.Key(),
+                          (int)me->publicTag.QueueSize(), me->publicTag.QueueKey(),
+                          r->publicTag.Count(), r->publicTag.Key(),
+                          (int)r->publicTag.QueueSize(), r->publicTag.QueueKey());
                 }
             }
 
             // signal change
-            if (qsize > 0)
-                s->readtagchanged = true;
-            else
-                s->writetagchanged = true;
+            if (qsize == -1) s->readtagchanged = true;
+            else s->writetagchanged = true;
 
         } else {
             // Block
@@ -215,14 +243,19 @@ public:
                 me->privateTag.QueueSize(qsize);
                 me->privateTag.Count(std::max(me->publicTag.Count(), r->publicTag.Count()) + 1);
                 me->publicTag = me->privateTag;
+                DEBUG("Node %llu:%llu block %d\n", 
+                      me->privateTag.Count(), me->privateTag.Key(), (int)me->privateTag.QueueSize());
             }
             for (int j=0; j<me->nins; j++)
                 me->rt_ins[j]->readtagchanged = true;
             for (int j=0; j<me->nouts; j++)
                 me->rt_outs[j]->writetagchanged = true;
+
+            me->last_niter = me->total_niter;
+            me->last_blocker = r;
         }
-        me->last_blocker = r;
         return me;
+#undef DEBUG
     }
 
     // 
@@ -501,14 +534,19 @@ SKIRTbbSched::callKernel(SKIRRuntimeKernel *rt_kernel)
     //    errs() << "SKIRTbbSched callKernel: " << rt_kernel->work->getName() << "\n";
     kernel_t *k = new kernel_t(*rt_kernel);
     assert(k);
-    kernel_map_insert(rt_kernel, k);
-    k->active();
-    runq.push(k);
+
+    k->d4r_cb = kernel_task::d4r_cb;
+    k->d4r_cb_data = sg;
+
     if (EnableMergeSched) {
 	k->niter_cb = kernel_task::merge_cb;
 	k->niter_cb_data = sg;
     }
     //setAffinities();
+
+    kernel_map_insert(rt_kernel, k);
+    k->active();
+    runq.push(k);
 }
 
 void
@@ -557,13 +595,13 @@ SKIRTbbSched::loadCallback(float load)
 
     if ((load > 0.99) && (cur_workers < num_workers)) {
         cur_workers++;
-        int ret = root_task->adjust_demand(cur_workers);
+        /*int ret =*/ root_task->adjust_demand(cur_workers);
         //printf("++ %d\n", ret);
         // if we're reversing the last thing, and making things better, back off
         // if we're doing the same thing as before, go faster
-        if (last_was_dec)
+        if (last_was_dec) {
             if (delta > 0) backoff = 1;
-        else
+        } else
             backoff = -1;
         last_was_dec = false;
         last_was_inc = true;
@@ -571,7 +609,7 @@ SKIRTbbSched::loadCallback(float load)
     }
     else if ((load < 0.75) && cur_workers > 1) {
         cur_workers--;
-        int ret = root_task->adjust_demand(cur_workers);
+        /*int ret =*/ root_task->adjust_demand(cur_workers);
         //printf("--> %d\n", ret);
         // if we're reversing the last thing, and making things better, back off
         // if we're doing the same thing as before, go faster

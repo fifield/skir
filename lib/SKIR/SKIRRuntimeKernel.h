@@ -95,6 +95,7 @@ struct SKIRRuntimeKernel
 
     // for D4R
     SKIRRuntimeKernel *last_blocker;
+    size_t last_niter;
     D4R::Tag publicTag;
     D4R::Tag privateTag;
     tag_lock_t taglock;

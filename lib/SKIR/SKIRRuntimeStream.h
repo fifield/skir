@@ -33,8 +33,8 @@ struct SKIRRuntimeStream
     si(0), id(id), type(-1),
 	is_src(false), is_dst(false),
 	elem_size(0), stride(0), //begin(0), end(0),
-	pop_rate(-1), push_rate(-1), peek_rate(0),
-        readtagchanged(false), writetagchanged(false), qsize(STREAM_BUFFER_SIZE)
+        readtagchanged(false), writetagchanged(false), qsize(STREAM_BUFFER_SIZE),
+	pop_rate(-1), push_rate(-1), peek_rate(0)
     {}
 
     enum Type {

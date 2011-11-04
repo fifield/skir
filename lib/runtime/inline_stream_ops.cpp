@@ -61,11 +61,13 @@ __SKIRRT_workfn_inline2(/*skir_rt_state_t *rt_state, */
     while (s->iter0 < s->niter0) {
 	skir_kernel_ptr_t k = __SKIRRT_workfn_extern0(s->rt_state0, s->state0, s->ins0, s->outs0);
 	if (k != 0) return k;
+        s->rt_state0->niter++;
 	s->iter0++;
     }
     while (s->iter1 < s->niter1) {
 	skir_kernel_ptr_t k = __SKIRRT_workfn_extern1(s->rt_state1, s->state1, s->ins1, s->outs1);
 	if (k != 0) return k;
+        s->rt_state1->niter++;
 	s->iter1++;
     }
     s->iter0 = 0;
@@ -98,11 +100,13 @@ __SKIRRT_workfn_inline2_1_1(/*skir_rt_state_t *rt_state, */
     //if (s->iter0 == 0) {
 	k = __SKIRRT_workfn_extern0(s->rt_state0, s->state0, s->ins0, s->outs0);
 	if (k != 0) return k;
+        s->rt_state0->niter++;
 	//s->iter0 = 1;
 	//}
 	//if (s->iter1 == 0) {
 	k = __SKIRRT_workfn_extern1(s->rt_state1, s->state1, s->ins1, s->outs1);
 	if (k != 0) return k;
+        s->rt_state1->niter++;
 	//s->iter1 = 1;
     //}
     //s->iter0 = 0;
@@ -485,8 +489,8 @@ void * __SKIRRT_workfn_loop(skir_rt_state_t *rt_state, void *kernel_state,
 {
     void *k = 0;
     while (k == 0) {
-	rt_state->niter++;
 	k = __SKIRRT_workfn_extern(rt_state, kernel_state, ins, outs);
+	rt_state->niter++;
     }
     return k;
 }
@@ -507,8 +511,8 @@ void * __SKIRRT_workfn_nocheck_E_B_(skir_rt_state_t *rt_state, void *kernel_stat
 
     void *k = 0;
     while (niter--) {
-	rt_state->niter++;
 	k = __SKIRRT_workfn_extern(rt_state, kernel_state, ins, outs);
+	rt_state->niter++;
 	if (k) break;
     }
 
@@ -531,8 +535,8 @@ void * __SKIRRT_workfn_nocheck_E_B_< 0, 0 >(skir_rt_state_t *rt_state, void *ker
 
     void *k = 0;
     while (niter--) {
-	rt_state->niter++;
 	k = __SKIRRT_workfn_extern(rt_state, kernel_state, ins, outs);
+	rt_state->niter++;
 	if (k) break;
     }
 
@@ -600,9 +604,9 @@ __SKIRRT_workfn_nocheck_1_1(skir_rt_state_t   *rt_state,
 
     k = 0;
     while (i) {
-	rt_state->niter++;
 	i--;
 	k = __SKIRRT_workfn_extern(rt_state, kernel_state, ip, op);
+	rt_state->niter++;
 	*real_tail = in.tail;
 	*real_head = out.head;
 	if (k) break;
@@ -643,8 +647,8 @@ __SKIRRT_workfn_array(skir_rt_state_t   *rt_state,
 
     while (i) {
 	i--;
-	rt_state->niter++;
 	k = __SKIRRT_workfn_extern(rt_state, kernel_state, ip, op);
+	rt_state->niter++;
 	if (k) break;
     }
 
