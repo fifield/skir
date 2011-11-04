@@ -32,8 +32,9 @@ struct SKIRRuntimeStream
     SKIRRuntimeStream(unsigned id) :
     si(0), id(id), type(-1),
 	is_src(false), is_dst(false),
-	elem_size(0), stride(0), begin(0), end(0),
-	pop_rate(-1), push_rate(-1), peek_rate(0)
+	elem_size(0), stride(0), //begin(0), end(0),
+	pop_rate(-1), push_rate(-1), peek_rate(0),
+        readtagchanged(false), writetagchanged(false), qsize(STREAM_BUFFER_SIZE)
     {}
 
     enum Type {
@@ -55,8 +56,13 @@ struct SKIRRuntimeStream
     // for array streams
     unsigned int elem_size;
     unsigned int stride;
-    void *begin;
-    void *end;
+    //void *begin;
+    //void *end;
+
+    // for D4R
+    bool readtagchanged;
+    bool writetagchanged;
+    int qsize;
 
     int getPopRate() { return pop_rate; }
     int getPushRate() { return push_rate; }
@@ -67,7 +73,7 @@ struct SKIRRuntimeStream
     void setPeekRate(int r) { peek_rate = r; }    
 
 private:
-    // these are private so that they will
+    // these are private so that they will not
     // be confused with fields of the same name 
     // in skir_stream_t
     int pop_rate;

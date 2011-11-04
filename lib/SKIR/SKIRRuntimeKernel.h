@@ -8,7 +8,10 @@
 #include <SKIR/SKIRStream.h>
 #include "SKIRRuntimeStream.h"
 
-#include <tbb/atomic.h>
+#include "D4RTag.h"
+
+//#include <tbb/atomic.h>
+#include <tbb/spin_mutex.h>
 
 #include <string.h>
 #include <vector>
@@ -18,6 +21,9 @@ namespace llvm {
 typedef void* work_function(void*, void*, void *, void *);
 
 class SKIRScheduler;
+
+// for D4R
+typedef tbb::spin_mutex tag_lock_t;
 
 // representation of kernels in the runtime grpah
 // NB: if location of rt_state changes, the coroutine impl must change (e.g. SKIRRT_yield)
@@ -87,6 +93,12 @@ struct SKIRRuntimeKernel
 
     int affinity;
 
+    // for D4R
+    SKIRRuntimeKernel *last_blocker;
+    D4R::Tag publicTag;
+    D4R::Tag privateTag;
+    tag_lock_t taglock;
+
     // stats
     unsigned long long total_runtime;
     unsigned long long total_niter;
@@ -96,7 +108,7 @@ struct SKIRRuntimeKernel
     unsigned long long total_runtime_per_thread[48];
 
     // constructor
-    SKIRRuntimeKernel(unsigned i)
+    SKIRRuntimeKernel(unsigned i) : publicTag(i), privateTag(i), taglock()
     {
 	workfn = NULL;
 	state = NULL;

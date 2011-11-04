@@ -23,7 +23,7 @@ OPENCL_LDFLAGS=-L$(OPENCL_PATH)/lib/x86_64 -lOpenCL
 PROTOBUF_CFLAGS=-I/usr/local/include
 PROTOBUF_LIBS=-pthread -lprotobuf -lz -L/usr/local/lib
 
-CXXFLAGS+=-I$(PROJ_SRC_DIR)/$(LEVEL)/deps/tbb/include -DUSE_OPENCL $(OPENCL_CFLAGS)
+CXXFLAGS+=-I$(PROJ_SRC_DIR)/$(LEVEL)/deps/tbb/include -DUSE_OPENCL $(OPENCL_CFLAGS) -I$(PROJ_SRC_DIR)/$(LEVEL)/deps/d4r
 CXXFLAGS+=-DUSE_TBB=$(USE_TBB)  $(PROTOBUF_CFLAGS) -I$(LibDir) -Wno-div-by-zero
 
 LDFLAGS+=$(OPENCL_LDFLAGS) $(PROTOBUF_LIBS)

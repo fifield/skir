@@ -155,6 +155,76 @@ public:
     }
 #endif
 
+    static SKIRRuntimeKernel* d4r_cb(void *v, SKIRRuntimeKernel *me, SKIRRuntimeKernel *r)
+    {
+        SKIRRuntimeGraph *sg = (SKIRRuntimeGraph *)v;
+
+        SKIRRuntimeStream *s = 0;
+        int qsize = 0;
+        // locate blocking kernel
+        for (int j=0; j<me->nins && !s; j++) {
+            if (me->rt_ins[j]->si->src == r) {
+                // blocked on read
+                s = me->rt_ins[j];
+                qsize = -1;
+            }
+        }
+        for (int j=0; j<me->nouts && !s; j++) {
+            if (me->rt_outs[j]->si->dst == r) {
+                // blocked on write
+                s = me->rt_outs[j];
+                qsize = me->rt_ins[j]->qsize;
+            }
+        }
+        assert(s && "could not locate blocking kernel!");
+
+        if (r == me->last_blocker) {
+            // Transmit
+            bool detect = false;
+
+            if (qsize > 0 && s->writetagchanged)
+                s->writetagchanged = false;
+            else if (s->readtagchanged)
+                s->readtagchanged = false;
+            else return me;
+
+            {
+                tag_lock_t::scoped_lock lock;
+                lock.acquire(me->taglock);
+                if (me->publicTag < r->publicTag) {
+                    uint128_t priority = std::min(me->privateTag.Priority(), r->publicTag.Priority());
+                    me->publicTag = r->publicTag;
+                    me->publicTag.Priority(priority);
+                }
+                else if (me->publicTag == r->publicTag) {
+                    assert(0 && 'detected');
+                }
+            }
+
+            // signal change
+            if (qsize > 0)
+                s->readtagchanged = true;
+            else
+                s->writetagchanged = true;
+
+        } else {
+            // Block
+            {
+                tag_lock_t::scoped_lock lock;
+                lock.acquire(me->taglock);
+                me->privateTag.QueueSize(qsize);
+                me->privateTag.Count(std::max(me->publicTag.Count(), r->publicTag.Count()) + 1);
+                me->publicTag = me->privateTag;
+            }
+            for (int j=0; j<me->nins; j++)
+                me->rt_ins[j]->readtagchanged = true;
+            for (int j=0; j<me->nouts; j++)
+                me->rt_outs[j]->writetagchanged = true;
+        }
+        me->last_blocker = r;
+        return me;
+    }
+
     // 
     // try to perform dynamic kernel fusion
     //
