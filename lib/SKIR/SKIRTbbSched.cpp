@@ -165,6 +165,9 @@ public:
 
         //SKIRRuntimeGraph *sg = (SKIRRuntimeGraph *)v;
 
+        if (r == 0) return r;
+	if ((size_t)r & 1) return r;
+
         SKIRRuntimeStream *s = 0;
         int qsize = 0;
         // locate blocking kernel
@@ -179,7 +182,7 @@ public:
             if (me->rt_outs && me->rt_outs[j]->si->dst == r) {
                 // blocked on write
                 s = me->rt_outs[j];
-                qsize = me->rt_ins[j]->qsize;
+                qsize = me->rt_outs[j]->qsize;
             }
         }
         if (!s) return me;
