@@ -46,8 +46,8 @@ TbbMonitor("tbb-monitor",
 	   cl::desc("tbb monitor"), cl::init(false));
 
 static cl::opt<bool>
-TbbMonitor("tbb-d4r",
-	   cl::desc("enable D4R deadlock detection"), cl::init(false));
+EnableD4R("tbb-d4r",
+          cl::desc("enable D4R deadlock detection"), cl::init(false));
 
 #if 0
 // < thread affinity, tbb affinity >
