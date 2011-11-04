@@ -171,21 +171,23 @@ public:
         SKIRRuntimeStream *s = 0;
         int qsize = 0;
         // locate blocking kernel
-        for (int j=0; j<me->nins && !s; j++) {
+        for (int j=0; j<me->nins; j++) {
             if (me->rt_ins && me->rt_ins[j]->si->src == r) {
                 // blocked on read
                 s = me->rt_ins[j];
                 qsize = -1;
+                break;
             }
         }
-        for (int j=0; j<me->nouts && !s; j++) {
+        for (int j=0; j<me->nouts; j++) {
             if (me->rt_outs && me->rt_outs[j]->si->dst == r) {
                 // blocked on write
                 s = me->rt_outs[j];
                 qsize = me->rt_outs[j]->qsize;
+                break;
             }
         }
-        if (!s) return me;
+        if (!s) return r;
 
         if ((r == me->last_blocker) && (me->total_niter == me->last_niter)) {
             // Transmit
@@ -194,11 +196,11 @@ public:
                 s->writetagchanged = false;
             else if (s->readtagchanged)
                 s->readtagchanged = false;
-            else return me;
+            else return r;
 
             {
-                tag_lock_t::scoped_lock lock;
-                lock.acquire(me->taglock);
+                //tag_lock_t::scoped_lock lock;
+                //lock.acquire(me->taglock);
                 if (me->publicTag < r->publicTag) {
                     uint128_t priority = std::min(me->privateTag.Priority(), r->publicTag.Priority());
                     me->publicTag = r->publicTag;
@@ -244,8 +246,8 @@ public:
         } else {
             // Block
             {
-                tag_lock_t::scoped_lock lock;
-                lock.acquire(me->taglock);
+                //tag_lock_t::scoped_lock lock;
+                //lock.acquire(me->taglock);
                 me->privateTag.QueueSize(qsize);
                 me->privateTag.Count(std::max(me->publicTag.Count(), r->publicTag.Count()) + 1);
                 me->publicTag = me->privateTag;
@@ -260,7 +262,7 @@ public:
             me->last_niter = me->total_niter;
             me->last_blocker = r;
         }
-        return me;
+        return r;
 #undef DEBUG
     }
 

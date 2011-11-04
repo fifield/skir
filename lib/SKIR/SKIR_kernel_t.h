@@ -63,8 +63,11 @@ struct kernel_t {
 	rt_kernel.total_niter += rt_kernel.rt_state->niter;
 	rt_kernel.total_ncall++;
 
-        if (d4r_cb) r = d4r_cb(d4r_cb_data, &rt_kernel, r);
-
+        if (d4r_cb) {
+            if ((rt_kernel.total_ncall & 0xff) == 0) {
+                d4r_cb(d4r_cb_data, &rt_kernel, r);
+            }
+        }
 	if (niter_cb) {
 	    if ((rt_kernel.total_niter & 0x3) == 0) {
 		r = niter_cb(niter_cb_data, &rt_kernel, r);
