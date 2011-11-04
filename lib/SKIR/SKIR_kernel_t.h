@@ -39,6 +39,7 @@ struct kernel_t {
 	pthread_cond_init (&wait_cond, NULL);
 	wait_state = IDLE;
 	niter_cb = 0;
+	d4r_cb = 0;
     }
 
     ~kernel_t() {

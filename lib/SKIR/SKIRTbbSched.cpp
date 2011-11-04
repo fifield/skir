@@ -45,6 +45,9 @@ static cl::opt<bool>
 TbbMonitor("tbb-monitor",
 	   cl::desc("tbb monitor"), cl::init(false));
 
+static cl::opt<bool>
+TbbMonitor("tbb-d4r",
+	   cl::desc("enable D4R deadlock detection"), cl::init(false));
 
 #if 0
 // < thread affinity, tbb affinity >
@@ -243,7 +246,7 @@ public:
                 me->privateTag.QueueSize(qsize);
                 me->privateTag.Count(std::max(me->publicTag.Count(), r->publicTag.Count()) + 1);
                 me->publicTag = me->privateTag;
-                DEBUG("Node %llu:%llu block %d\n", 
+                DEBUG("Node %llu:%llu block %d\n",
                       me->privateTag.Count(), me->privateTag.Key(), (int)me->privateTag.QueueSize());
             }
             for (int j=0; j<me->nins; j++)
@@ -535,9 +538,10 @@ SKIRTbbSched::callKernel(SKIRRuntimeKernel *rt_kernel)
     kernel_t *k = new kernel_t(*rt_kernel);
     assert(k);
 
-    k->d4r_cb = kernel_task::d4r_cb;
-    k->d4r_cb_data = sg;
-
+    if (EnableD4R) {
+        k->d4r_cb = kernel_task::d4r_cb;
+        k->d4r_cb_data = sg;
+    }
     if (EnableMergeSched) {
 	k->niter_cb = kernel_task::merge_cb;
 	k->niter_cb_data = sg;
