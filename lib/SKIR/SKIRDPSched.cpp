@@ -40,7 +40,9 @@ SKIRDPSched::callKernel(SKIRRuntimeKernel *rtk)
 	// pass kernels to the tbb sched
 	sched = sg->getTbbSched();
 
+        // XXX - terrible annotation
 	if (rtk->base_work->getName().find("skirdp") == std::string::npos) {
+            // pass to default scheduler
 	    rtk->sched = sched;
 	    rtk->sched->callKernel(rtk);
 	    return;

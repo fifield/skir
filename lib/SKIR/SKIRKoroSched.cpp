@@ -351,6 +351,7 @@ asm(							  \
 void
 SKIRKoroSched::runCodeGen(SKIRRuntimeKernel *rtk)
 {
+    // defined below
     genericCodeGen(sg, rtk);
 }
 
@@ -387,10 +388,11 @@ SKIRKoroSched::genericCodeGen(SKIRRuntimeGraph *sg, SKIRRuntimeKernel *rtk)
 
 	    void *fp = reinterpret_cast<void*>(reinterpret_cast<size_t>(rtk->workfn));
 	    koro->saved_pc = koro->fn = fp;
-#if 0
+#if 0 // if 1 -> 32bit, could be broken
 	    koro->yield_pc 
 		= reinterpret_cast<void*>(reinterpret_cast<size_t>(koro_workfn_32_yield_pt));
 #else
+            // 64-bit
 	    koro->yield_pc = 0;
 #endif
 
@@ -402,7 +404,7 @@ SKIRKoroSched::genericCodeGen(SKIRRuntimeGraph *sg, SKIRRuntimeKernel *rtk)
 		memcpy(koro->saved_sp, &d, sizeof(d));			\
 	    }
 
-#if 0
+#if 0 // if 1 -> 32bit, could be broken
 	    // push arguments to work function
 	    KORO_PUSH(rtk->impl_outs);
 	    KORO_PUSH(rtk->impl_ins);
@@ -420,6 +422,7 @@ SKIRKoroSched::genericCodeGen(SKIRRuntimeGraph *sg, SKIRRuntimeKernel *rtk)
 
 	    rtk->workfn = koro_workfn_32;
 #else
+            // 64-bit
 	    // push dummy return address
 	    KORO_PUSH(-1);
 

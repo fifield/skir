@@ -7,6 +7,10 @@
 #include <llvm/Target/TargetData.h>
 #include <llvm/ADT/Twine.h>
 
+///
+/// Helper functions for building SKIR.  Used primarily by the StreamIt frontend.
+///
+
 using namespace llvm;
 
 Value *
@@ -62,7 +66,9 @@ SKIRBuilder::CreatePop(Module *mod, Value *stream, Value *elm)
 {
     Value *int_skir_pop = Intrinsic::getDeclaration(mod, Intrinsic::skir_pop);
     elm = CreateBitCast(elm, GetStreamElementType(mod->getContext()));
-    return CreateCall2(int_skir_pop, stream, elm);
+    CallInst *call = CreateCall2(int_skir_pop, stream, elm);
+    call->setAttributes(Intrinsic::getAttributes(Intrinsic::skir_pop));
+    return call;
 }
 
 Value *

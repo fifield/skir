@@ -6,13 +6,9 @@
 #include <llvm/Constants.h>
 #include <llvm/IntrinsicInst.h>
 
-//#include <llvm/Instructions.h>
-//#include <llvm/Type.h>
-
 #include <SKIR/SKIRRuntime.h>
 
 #include "SKIRRuntimeStream.h"
-//#include "SKIRKernelInfoPass.h"
 #include "SKIRUtil.h"
 
 using namespace llvm;
@@ -31,6 +27,8 @@ public:
     SKIRBlockingOpsPass() : FunctionPass((intptr_t)&ID) {}
     SKIRBlockingOpsPass(SKIRRuntimeKernel *k) : FunctionPass((intptr_t)&ID), kernel(k)  {}
 
+    /// replace skir intrinsics with blocking runtime calls:
+    ///   skir.OP -> __SKIRRT_inline_OP_block
     bool runOnFunction(Function &work)
     {
 	assert(kernel && kernel->rt_ins && kernel->rt_outs);
@@ -70,9 +68,10 @@ public:
     }
 
 };
-    char SKIRBlockingOpsPass::ID = 0;
-    RegisterPass<SKIRBlockingOpsPass> X("skir-blocking-ops",
-					"SKIR - generate blocking stream operations", false, false);
+
+char SKIRBlockingOpsPass::ID = 0;
+RegisterPass<SKIRBlockingOpsPass> X("skir-blocking-ops",
+                                    "SKIR - inline blocking stream operations", false, false);
 
 }
 

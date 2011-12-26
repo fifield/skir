@@ -20,18 +20,8 @@ using namespace llvm;
 
 namespace {
 
+// ReplaceCallWith derived from llvm/lib/CodeGen/IntrinsicLowering.cpp
 
-#if 0
-#include <fstream>
-    ofstream o;
-    o.open((kernel->work->getName().str()+"_rt.ll").c_str());
-    raw_os_ostream oo(o);
-    kernel->work->print(oo, 0);
-    o.close();
-#endif
-
-
-// BEGIN FROM llvm/lib/CodeGen/IntrinsicLowering.cpp
 /// ReplaceCallWith - This function is used when we want to lower an intrinsic
 /// call to a call of an external function.  This handles hard cases such as
 /// when there was already a prototype for the external function, and if that

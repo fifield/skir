@@ -16,8 +16,9 @@
 
 namespace llvm {
 
-// the dp scheduler
-
+///
+/// The SKIRDPSched implements dynamic fission.
+///
 class SKIRDPSched : public SKIRScheduler {
 public:
 

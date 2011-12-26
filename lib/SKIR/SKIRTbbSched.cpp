@@ -88,8 +88,8 @@ static MyObserver observer;
 
 //
 // kernel_map & helpers
-//   kernel_map maps SKIRRuntimeKernels (i.e. skir inst operands)
-//   to a corresponding kernel_t (tbbsched information)
+//   kernel_map maps SKIRRuntimeKernels (i.e. skir intrisic operand)
+//   to a corresponding kernel_t (i.e. sched implementation details)
 //
 
 // hash_map<int> kernel_map 
@@ -275,7 +275,8 @@ public:
 
 	//SKIRRuntimeKernel *limiter = sg->getLimiter();
 	//if(limiter) errs() << "LIMITER: " << limiter->work->getName() << "\n";
-	    
+
+        // if kernel returned normally
 	if (r == 0) return r;
 	if ((size_t)r & 1) return r;
 
@@ -308,6 +309,7 @@ public:
 		kernel_t *blocker = kernel_map_find(r);
 		kernel_lock_t::scoped_lock l;
 		if (l.try_acquire(blocker->lock)) {
+                    // now we have a lock on both the blocker and the blockee
 		    if (me->rt_ins[blk_idx]->si->head == me->rt_ins[blk_idx]->si->tail) {
 			Function *old_me_work = me->work;
 			Function *old_r_work = r->work;
